@@ -23,5 +23,8 @@ describe('Req1. atingir 90% de cobertura em todo o teste', () => {
     userEvent.click(buttonLogin);
     // const { pathname } = history.location;
     // expect(pathname).toBe('/');
+
+    // const testLocalStorage = JSON.parse(localStorage.getItem('key'));
+    // expect(testLocalStorage.email).toBe('test@gmail.com');
   });
 });
