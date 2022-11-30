@@ -14,6 +14,7 @@ describe('Testando o componente Header, 45% e 90% de cobertura', () => {
     expect(profileBtn).toBeInTheDocument();
   });
   test('', () => {
+
     // const searchBtn = await screen.findByTestId('search-input');
     // expect(searchBtn).toBeInTheDocument();
 
