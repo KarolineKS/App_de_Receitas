@@ -14,6 +14,10 @@ export default function Header(props) {
     history.push('/profile');
   };
 
+  const itsSpecific = () => {
+    setSpecificHeader(!specificHeader);
+  };
+
   const handleChange = ({ target: { value } }) => {
     setSearch(value);
   };
@@ -29,16 +33,28 @@ export default function Header(props) {
         <img src={ profileIcon } alt="profile" />
       </button>
 
-      <button // presente somente em algumas páginas
-        data-testid="search-top-btn"
-        type="button"
-        src={ searchIcon }
-      >
-        <img src={ searchIcon } alt="search" />
-      </button>
-
+      { !searchBtn ? ''
+        : (
+          <button // presente somente em algumas páginas
+            data-testid="search-top-btn"
+            type="button"
+            src={ searchIcon }
+            onClick={ itsSpecific }
+          >
+            <img src={ searchIcon } alt="search" />
+          </button>
+        )}
       <div>
         <h1 data-testid="page-title">{pageTitle}</h1>
+        { !specificHeader ? ''
+          : (
+            <input
+              data-testid="search-input"
+              type="text"
+              value={ search }
+              onChange={ handleChange }
+            />
+          )}
       </div>
 
     </section>
