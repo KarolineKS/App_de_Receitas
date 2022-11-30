@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, waitForElementToBeRemoved } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../App';
 import renderWithRouter from './helpers/renderWithRouter';
@@ -7,7 +7,8 @@ import { getFromLocal } from '../services/storage';
 
 describe('Req1. atingir 90% de cobertura em todo o teste', () => {
   test('Testando pagina de login', async () => {
-    const { history } = renderWithRouter(<App />);
+    // const { history } =
+    renderWithRouter(<App />);
     const email = screen.getByPlaceholderText(/Digite seu email/i);
     expect(email).toBeInTheDocument();
 
