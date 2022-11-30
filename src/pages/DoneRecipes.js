@@ -4,7 +4,11 @@ import Header from '../components/Header';
 export default function DoneRecipes() {
   return (
     <div>
-      <Header pageTitle="Done Recipes" searchBtn={ false } />
+      <header>
+        <Header pageTitle="Done Recipes" searchBtn={ false } />
+
+      </header>
+
     </div>
   );
 }
