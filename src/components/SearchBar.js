@@ -2,8 +2,8 @@ import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import RecipesContext from '../context/RecipesContext';
 
-export default function SearchBar({ url, search, history, type }) {
-  const { radioSearch, setRadioSearch, setRecipes } = useContext(RecipesContext);
+export default function SearchBar({ url, search, history, type, setFunc }) {
+  const { radioSearch, setRadioSearch } = useContext(RecipesContext);
   const handleButton = async () => {
     try {
       if (radioSearch === 'f' && search.length > 1) {
@@ -14,7 +14,7 @@ export default function SearchBar({ url, search, history, type }) {
         ? `${url}filter.php?i=${search}` : `${url}search.php?${radioSearch}=${search}`;
       const response = await fetch(newUrl);
       const data = await response.json();
-      setRecipes(data);
+      setFunc(data);
       if (data[type]?.length === 1) {
         const key = Object.keys(data[type][0]).find((e) => e.includes('id'));
         const urlParam = `${type}/${data[type][0][key]}`;
@@ -83,4 +83,5 @@ SearchBar.propTypes = {
   search: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   history: PropTypes.shape({ push: PropTypes.func }).isRequired,
+  setFunc: PropTypes.func.isRequired,
 };
