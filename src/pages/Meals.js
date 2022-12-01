@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
+import Footer from '../components/Footer';
 import Header from '../components/Header';
 import RecipesContext from '../context/RecipesContext';
 
@@ -27,6 +28,9 @@ export default function Meals({ history }) {
             </p>
           </div>
         ))}
+      <footer>
+        <Footer />
+      </footer>
     </div>
   );
 }
