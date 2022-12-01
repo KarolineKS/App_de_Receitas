@@ -4,10 +4,16 @@ import userEvent from '@testing-library/user-event';
 import App from '../App';
 import renderWithRouter from './helpers/renderWithRouter';
 import { getFromLocal } from '../services/storage';
+import RecipesProvider from '../context/RecipesProvider';
 
 describe('Req1. atingir 90% de cobertura em todo o teste', () => {
   test('Testando pagina de login', async () => {
-    const { history } = renderWithRouter(<App />);
+    renderWithRouter(
+      <RecipesProvider>
+        <App />
+        ,
+      </RecipesProvider>,
+    );
     const email = screen.getByPlaceholderText(/Digite seu email/i);
     expect(email).toBeInTheDocument();
 
@@ -21,10 +27,14 @@ describe('Req1. atingir 90% de cobertura em todo o teste', () => {
     userEvent.type(email, 'test@gmail.com');
 
     expect(buttonLogin).not.toBeDisabled();
+
     userEvent.click(buttonLogin);
 
+    const title = screen.getByTestId(/page-title/i);
+    expect(title).toBeInTheDocument();
+
+    // history.push('/meals');
     // await waitForElementToBeRemoved(buttonLogin, { timeout: 2000 });
-    expect(history.location.pathname).toBe('/');
 
     const testLocalStorage = getFromLocal('user');
     expect(testLocalStorage.email).toBe('test@gmail.com');
