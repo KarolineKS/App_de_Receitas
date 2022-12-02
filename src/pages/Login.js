@@ -21,6 +21,7 @@ function Login({ history }) {
 
   return (
     <div>
+      <h4>Login</h4>
       <form>
         <label htmlFor="email">
           email
