@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
 import App from '../App';
 import renderWithRouter from './helpers/renderWithRouter';
+import { MEALS_MOCK } from './helpers/mock_recipes';
 
 const searchInputDti = 'search-input';
 const firstLetterDti = 'first-letter-search-radio';
@@ -15,7 +16,7 @@ describe('Cobertura de 45% e 90% do componente SearchBar ', () => {
   beforeEach(() => {
     jest.spyOn(global, 'fetch');
     global.fetch.mockResolvedValue({
-      json: jest.fn().mockResolvedValue({ mock: 'mock' }),
+      json: jest.fn().mockResolvedValue({ mock: 'mock_recipes' }),
     });
   });
 
@@ -43,6 +44,10 @@ describe('Cobertura de 45% e 90% do componente SearchBar ', () => {
     });
   });
   test('Se as APIs são chamadas de forma correta de acordo com as formas de busca disponíveis', () => {
+    jest.spyOn(global, 'fetch');
+    global.fetch.mockResolvedValue({
+      json: jest.fn().mockResolvedValue(MEALS_MOCK),
+    });
     const { history } = renderWithRouter(<App />);
 
     act(() => {
@@ -62,7 +67,7 @@ describe('Cobertura de 45% e 90% do componente SearchBar ', () => {
       userEvent.click(ingredient);
       userEvent.click(btn);
       expect(fetch).toHaveBeenCalledWith('https://www.themealdb.com/api/json/v1/1/filter.php?i=egg');
-      expect(screen.getByText('Baingan Bharta'));
+      expect(screen.getByText('Baingan Bharta')).toBeVisible();
     });
 
     waitFor(() => {
@@ -72,7 +77,7 @@ describe('Cobertura de 45% e 90% do componente SearchBar ', () => {
       userEvent.click(name);
       userEvent.click(btn);
       expect(fetch).toHaveBeenLastCalledWith('https://www.themealdb.com/api/json/v1/1/search.php?s=beef');
-      expect(screen.getByText('Beef Lo Mein'));
+      expect(screen.getByText('Beef Lo Mein')).toBeVisible();
     });
 
     waitFor(() => {
@@ -82,16 +87,13 @@ describe('Cobertura de 45% e 90% do componente SearchBar ', () => {
       userEvent.click(firstLetter);
       userEvent.click(btn);
       expect(fetch).toHaveBeenLastCalledWith('https://www.themealdb.com/api/json/v1/1/search.php?f=a');
-      expect(screen.getByText('Apple Frangipan Tart'));
+      expect(screen.getByText('Apple Frangipan Tart')).toBeVisible();
     });
   });
 
   test('Se selecionar o radio Name e digitar uma única letra retorna um alerta de mensagem: "Sorry, we havent found any recipes for these filters."', async () => {
     const alertMessage = 'Sorry, we haven\'t found any recipes for these filters.';
-    // const alertMock =
-    window.alert = jest.spyOn(global, 'alert').mockImplementation(() => Promise.resolve({
-      json: () => Promise.resolve(alertMessage),
-    }));
+    global.alert = jest.fn();
 
     const { history } = renderWithRouter(<App />);
     act(() => {
@@ -109,15 +111,15 @@ describe('Cobertura de 45% e 90% do componente SearchBar ', () => {
     userEvent.type(searchInput, 'a');
     userEvent.click(name);
     userEvent.click(btn);
-    expect(window.alert).toBe(alert);
-    // expect(window.alert).toHaveBeenCalledTimes(1);
+
+    waitFor(() => {
+      expect(global.alert).toBeCalledWith(alertMessage);
+      expect(global.alert).toHaveBeenCalledTimes(1);
+    });
   });
+
   test('Se selecionar o radio FirstLetter e digitar mais que uma única letra retorna um alerta de mensagem: "Your search must have only 1 (one) character"', async () => {
-    const alertMessage1 = 'Your search must have only 1 (one) character';
-    // const alertMock =
-    window.alert = jest.spyOn(global, 'alert').mockImplementation(() => Promise.resolve({
-      json: () => Promise.resolve(alertMessage1),
-    }));
+    global.alert = jest.fn();
 
     const { history } = renderWithRouter(<App />);
     act(() => {
@@ -135,27 +137,42 @@ describe('Cobertura de 45% e 90% do componente SearchBar ', () => {
     userEvent.click(firstLetter);
     userEvent.type(searchInput, 'aa');
     userEvent.click(btn);
-    expect(window.alert).toBe(alert);
-    // expect(window.alert).toHaveBeenCalledTimes(1);
+
+    waitFor(() => {
+      expect(global.alert).toBeCalledWith('Your search must have only 1 (one) character');
+      expect(global.alert).toHaveBeenCalledTimes(1);
+    });
+  });
+  // testando API drinks
+  test('Se selecionar o radio FirstLetter e digitar mais que uma única letra retorna um alerta de mensagem: "Your search must have only 1 (one) character"', async () => {
+    const alertMessage1 = 'Your search must have only 1 (one) character';
+    global.alert = jest.fn();
+
+    const { history } = renderWithRouter(<App />);
+    act(() => {
+      history.push('/drinks');
+    });
+    await screen.findByRole('heading', { name: /Drinks/i });
+
+    const searchInput = screen.queryByTestId(searchInputDti);
+    const btnTop = screen.getByTestId(btnTopDti);
+    const btn = await screen.findByTestId(btnDti);
+    const firstLetter = screen.findByTestId(firstLetterDti);
+
+    userEvent.click(btnTop);
+    waitFor(() => {
+      expect(searchInput).toBeVisible();
+      userEvent.click(firstLetter);
+    });
+    userEvent.type(searchInput, 'aa');
+    userEvent.click(btn);
+
+    waitFor(() => {
+      expect(global.alert).toBeCalledWith(alertMessage1);
+      expect(global.alert).toHaveBeenCalledTimes(1);
+    });
   });
 });
-
-// it('alerts on submit click', async () => {
-//   const alertMock = jest.spyOn(global, 'alert').mockImplementation();
-//   renderWithRouter(<SearchBar />);
-//   userEvent.click(screen.getByText('Your search must have only 1 (one) character'));
-//   expect(alertMock).toHaveBeenCalledTimes(1);
-// });
-
-// userEvent.click(await ingredient);
-// userEvent.click(await btn);
-
-// waitFor(() => {
-//   expect(screen.findByText('Apple & Blackberry Crumble')).toBeVisible();
-//   userEvent.click(name);
-//   userEvent.click(btn);
-//   expect(screen.findByText('Bubble & Squeak')).toBeVisible();
-//   userEvent.click(firstLetter);
-//   userEvent.click(btn);
-//   expect(screen.findByText('Bakewell tart')).toBeVisible();
-// });
+// https://stackoverflow.com/questions/55933105/how-to-mock-or-assert-whether-window-alert-has-fired-in-react-jest-with-typesc
+// global.alert = jest.fn();
+// expect(global.alert).toHaveBeenCalledTimes(1);
