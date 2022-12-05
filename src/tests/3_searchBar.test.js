@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
 import App from '../App';
 import renderWithRouter from './helpers/renderWithRouter';
-import { MEALS_MOCK, FAIL_MEALS_MOCK } from './helpers/mock_recipes';
+import { MEALS_MOCK } from './helpers/mock_recipes';
 
 const searchInputDti = 'search-input';
 const firstLetterDti = 'first-letter-search-radio';
@@ -11,6 +11,7 @@ const nameDti = 'name-search-radio';
 const ingredientsDti = 'ingredient-search-radio';
 const btnSearchDti = 'exec-search-btn';
 const btnIconDti = 'search-top-btn';
+const alertMessage = 'Sorry, we haven\'t found any recipes for these filters.';
 
 describe('Cobertura de 45% e 90% do componente SearchBar ', () => {
   beforeEach(() => {
@@ -150,7 +151,6 @@ describe('Cobertura de 45% e 90% do componente SearchBar ', () => {
   });
 
   test('Se selecionar o radio Name e digitar uma única letra retorna um alerta de mensagem: "Sorry, we havent found any recipes for these filters."', async () => {
-    const alertMessage = 'Sorry, we haven\'t found any recipes for these filters.';
     global.alert = jest.fn();
 
     const { history } = renderWithRouter(<App />);
@@ -232,14 +232,28 @@ describe('Cobertura de 45% e 90% do componente SearchBar ', () => {
     });
   });
   test('Se exibe sinal de alerta quando a pag. nao recebe parâmetros', async () => {
-    jest.spyOn(global, 'fetch');
-    global.fetch.mockResolvedValue({
-      json: jest.fn().mockResolvedValue(FAIL_MEALS_MOCK),
-    });
+    global.alert = jest.fn();
     const { history } = renderWithRouter(<App />);
 
     act(() => {
       history.push('/meals');
+    });
+
+    await screen.findByRole('heading', { name: /Meals/i });
+
+    const searchInput = screen.findByTestId(searchInputDti);
+    const btnSearch = screen.findByTestId(btnSearchDti);
+    const iconSearch = screen.findByTestId(btnIconDti);
+
+    userEvent.click(await iconSearch);
+
+    expect(await searchInput).toBeVisible();
+    userEvent.type(searchInput, '');
+    userEvent.click(await btnSearch);
+
+    await waitFor(() => {
+      expect(global.alert).toBeCalledWith(alertMessage);
+      expect(global.alert).toHaveBeenCalledTimes(1);
     });
   });
 });
