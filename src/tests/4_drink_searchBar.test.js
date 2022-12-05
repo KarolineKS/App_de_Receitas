@@ -1,8 +1,15 @@
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
 import App from '../App';
 import renderWithRouter from './helpers/renderWithRouter';
+
+const searchInputDti = 'search-input';
+const firstLetterDti = 'first-letter-search-radio';
+const nameDti = 'name-search-radio';
+const ingredientsDti = 'ingredient-search-radio';
+const btnDti = 'exec-search-btn';
+const btnTopDti = 'search-top-btn';
 
 describe('Testando componente Drinks', () => {
   test('Verifique a busca por Drinks', async () => {
@@ -66,14 +73,23 @@ describe('Testando componente Drinks', () => {
     waitFor(() => {
       expect(screen.getByText('Cuba Libre')).toBeVisible();
     });
-    userEvent.clear(searchInput);
-    userEvent.type(searchInput, 'Lemon');
-    userEvent.click(ingredient);
+
+    waitFor(() => {
+      userEvent.clear(searchInput);
+      userEvent.type(searchInput, 'Lemon');
+      userEvent.click(ingredient);
+
+      expect(screen.getByText('California Lemonade')).toBeVisible();
+    });
+
     userEvent.click(btn);
 
-    userEvent.type(searchInput, 'b');
-    userEvent.click(firstLetter);
-    userEvent.click(btn);
+    userEvent.type(searchInput, 'l');
+
+    waitFor(() => {
+      userEvent.click(firstLetter);
+      userEvent.click(btn);
+      expect(screen.getByText('Limeade')).toBeVisible();
+    });
   });
 });
-

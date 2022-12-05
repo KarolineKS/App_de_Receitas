@@ -1,9 +1,12 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import RecipesContext from '../context/RecipesContext';
 
-export default function SearchBar({ url, search, history, type }) {
+export default function SearchBar({ url, history, type }) {
   const { radioSearch, setRadioSearch, setRecipes } = useContext(RecipesContext);
+
+  const [search, setSearch] = useState('');
+
   const handleButton = async () => {
     try {
       if (radioSearch === 'f' && search.length > 1) {
@@ -29,8 +32,17 @@ export default function SearchBar({ url, search, history, type }) {
       global.alert(alertMessage);
     }
   };
+  const handleChange = ({ target: { value } }) => {
+    setSearch(value);
+  };
   return (
     <div>
+      <input
+        data-testid="search-input"
+        type="text"
+        value={ search }
+        onChange={ handleChange }
+      />
       <label htmlFor="ingredient-search-radio">
         Ingredient
         <input
@@ -80,7 +92,7 @@ export default function SearchBar({ url, search, history, type }) {
 
 SearchBar.propTypes = {
   url: PropTypes.string.isRequired,
-  search: PropTypes.string.isRequired,
+  // search: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   history: PropTypes.shape({ push: PropTypes.func }).isRequired,
 };

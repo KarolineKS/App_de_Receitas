@@ -3,14 +3,14 @@ import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
 import App from '../App';
 import renderWithRouter from './helpers/renderWithRouter';
-import { MEALS_MOCK } from './helpers/mock_recipes';
+import { MEALS_MOCK, FAIL_MEALS_MOCK } from './helpers/mock_recipes';
 
 const searchInputDti = 'search-input';
 const firstLetterDti = 'first-letter-search-radio';
 const nameDti = 'name-search-radio';
 const ingredientsDti = 'ingredient-search-radio';
-const btnDti = 'exec-search-btn';
-const btnTopDti = 'search-top-btn';
+const btnSearchDti = 'exec-search-btn';
+const btnIconDti = 'search-top-btn';
 
 describe('Cobertura de 45% e 90% do componente SearchBar ', () => {
   beforeEach(() => {
@@ -29,21 +29,40 @@ describe('Cobertura de 45% e 90% do componente SearchBar ', () => {
     await screen.findByRole('heading', { name: /meals/i });
 
     const searchInput = screen.queryByTestId(searchInputDti);
-    expect(searchInput).toBe(null);
+    const name = screen.queryByTestId(nameDti);
+    const firstLetter = screen.queryByTestId(firstLetterDti);
+    const ingredient = screen.queryByTestId(ingredientsDti);
+    const btnSearch = screen.queryByTestId(btnSearchDti);
+    const iconSearch = screen.findByTestId(btnIconDti);
 
-    const name = screen.getByTestId(nameDti);
-    const firstLetter = screen.findByTestId(firstLetterDti);
-    const btn = screen.findByTestId(btnDti);
-    const ingredient = screen.findByTestId(ingredientsDti);
-
-    waitFor(() => {
-      expect(name).toBeInTheDocument();
-      expect(ingredient).toBeInTheDocument();
-      expect(firstLetter).toBeInTheDocument();
-      expect(btn).toBeInTheDocument();
-    });
+    expect(searchInput).not.toBeInTheDocument();
+    expect(name).not.toBeInTheDocument();
+    expect(ingredient).not.toBeInTheDocument();
+    expect(firstLetter).not.toBeInTheDocument();
+    expect(btnSearch).not.toBeInTheDocument();
+    expect(await iconSearch).toBeInTheDocument();
   });
-  test('Se as APIs são chamadas de forma correta de acordo com as formas de busca disponíveis', () => {
+
+  test('Se o campo de pesquisa digita o valor', async () => {
+    const { history } = renderWithRouter(<App />);
+
+    act(() => {
+      history.push('/meals');
+    });
+    await screen.findByRole('heading', { name: /meals/i });
+
+    const searchInput = screen.findByTestId(searchInputDti);
+    const iconSearch = screen.findByTestId(btnIconDti);
+
+    userEvent.click(await iconSearch);
+    expect(await searchInput).toBeInTheDocument();
+
+    expect(await searchInput).toBeVisible();
+    userEvent.type(await searchInput, 'egg');
+    expect(await searchInput).toHaveValue('egg');
+  });
+
+  test('Se as APIs são chamadas de forma correta de acordo com o campo de busca selecionado: searchInput e ingredient', async () => {
     jest.spyOn(global, 'fetch');
     global.fetch.mockResolvedValue({
       json: jest.fn().mockResolvedValue(MEALS_MOCK),
@@ -53,41 +72,80 @@ describe('Cobertura de 45% e 90% do componente SearchBar ', () => {
     act(() => {
       history.push('/meals');
     });
-    const searchInput = screen.queryByTestId(searchInputDti);
-    const btnTop = screen.getByTestId(btnTopDti);
+    const searchInput = screen.findByTestId(searchInputDti);
+    const btnSearch = screen.findByTestId(btnSearchDti);
     const ingredient = screen.findByTestId(ingredientsDti);
-    const btn = screen.findByTestId(btnDti);
-    const name = screen.getByTestId(nameDti);
-    const firstLetter = screen.findByTestId(firstLetterDti);
+    const iconSearch = screen.findByTestId(btnIconDti);
 
-    waitFor(() => {
-      userEvent.click(btnTop);
-      expect(searchInput).toBeInTheDocument();
-      userEvent.type(searchInput, 'egg');
-      userEvent.click(ingredient);
-      userEvent.click(btn);
+    userEvent.click(await iconSearch);
+
+    expect(await searchInput).toBeVisible();
+
+    userEvent.type(await searchInput, 'egg');
+    userEvent.click(await ingredient);
+    userEvent.click(await btnSearch);
+
+    await waitFor(() => {
       expect(fetch).toHaveBeenCalledWith('https://www.themealdb.com/api/json/v1/1/filter.php?i=egg');
-      expect(screen.getByText('Baingan Bharta')).toBeVisible();
+      expect(screen.getByText('Chivito uruguayo')).toBeVisible();
     });
+  });
 
-    waitFor(() => {
-      userEvent.click(btnTop);
-      expect(searchInput).toBeInTheDocument();
-      userEvent.type(searchInput, 'beef');
-      userEvent.click(name);
-      userEvent.click(btn);
+  test('Se as APIs são chamadas de forma correta de acordo com o campo de busca selecionado: searchInput e name', async () => {
+    jest.spyOn(global, 'fetch');
+    global.fetch.mockResolvedValue({
+      json: jest.fn().mockResolvedValue(MEALS_MOCK),
+    });
+    const { history } = renderWithRouter(<App />);
+
+    act(() => {
+      history.push('/meals');
+    });
+    const searchInput = screen.findByTestId(searchInputDti);
+    const btnSearch = screen.findByTestId(btnSearchDti);
+    const iconSearch = screen.findByTestId(btnIconDti);
+    const name = screen.findByTestId(nameDti);
+
+    userEvent.click(await iconSearch);
+
+    expect(await searchInput).toBeVisible();
+
+    userEvent.type(await searchInput, 'beef');
+    userEvent.click(await name);
+    userEvent.click(await btnSearch);
+
+    await waitFor(() => {
       expect(fetch).toHaveBeenLastCalledWith('https://www.themealdb.com/api/json/v1/1/search.php?s=beef');
       expect(screen.getByText('Beef Lo Mein')).toBeVisible();
     });
+  });
 
-    waitFor(() => {
-      userEvent.click(btnTop);
-      expect(searchInput).toBeInTheDocument();
-      userEvent.type(searchInput, 'a');
-      userEvent.click(firstLetter);
-      userEvent.click(btn);
-      expect(fetch).toHaveBeenLastCalledWith('https://www.themealdb.com/api/json/v1/1/search.php?f=a');
-      expect(screen.getByText('Apple Frangipan Tart')).toBeVisible();
+  test('Se as APIs são chamadas de forma correta de acordo com o campo de busca selecionado: searchInput e firsLetter', async () => {
+    jest.spyOn(global, 'fetch');
+    global.fetch.mockResolvedValue({
+      json: jest.fn().mockResolvedValue(MEALS_MOCK),
+    });
+    const { history } = renderWithRouter(<App />);
+
+    act(() => {
+      history.push('/meals');
+    });
+    const searchInput = screen.findByTestId(searchInputDti);
+    const btnSearch = screen.findByTestId(btnSearchDti);
+    const iconSearch = screen.findByTestId(btnIconDti);
+    const firstLetter = screen.findByTestId(firstLetterDti);
+
+    userEvent.click(await iconSearch);
+
+    expect(await searchInput).toBeVisible();
+
+    userEvent.type(await searchInput, 'c');
+    userEvent.click(await firstLetter);
+    userEvent.click(await btnSearch);
+
+    await waitFor(() => {
+      expect(fetch).toHaveBeenLastCalledWith('https://www.themealdb.com/api/json/v1/1/search.php?f=c');
+      expect(screen.getByText('Cream Cheese Tart')).toBeVisible();
     });
   });
 
@@ -99,18 +157,19 @@ describe('Cobertura de 45% e 90% do componente SearchBar ', () => {
     act(() => {
       history.push('/meals');
     });
-    const searchInput = screen.queryByTestId(searchInputDti);
-    const btnTop = screen.getByTestId(btnTopDti);
-    const name = screen.getByTestId(nameDti);
-    const btn = await screen.findByTestId(btnDti);
 
-    userEvent.click(btnTop);
-    waitFor(() => {
-      expect(searchInput).toBeVisible();
-    });
-    userEvent.type(searchInput, 'a');
-    userEvent.click(name);
-    userEvent.click(btn);
+    const searchInput = screen.findByTestId(searchInputDti);
+    const name = screen.findByTestId(nameDti);
+    const btnSearch = screen.findByTestId(btnSearchDti);
+    const iconSearch = screen.findByTestId(btnIconDti);
+
+    userEvent.click(await iconSearch);
+
+    expect(await searchInput).toBeVisible();
+
+    userEvent.type(await searchInput, 'a');
+    userEvent.click(await name);
+    userEvent.click(await btnSearch);
 
     waitFor(() => {
       expect(global.alert).toBeCalledWith(alertMessage);
@@ -125,21 +184,21 @@ describe('Cobertura de 45% e 90% do componente SearchBar ', () => {
     act(() => {
       history.push('/meals');
     });
-    const searchInput = screen.queryByTestId(searchInputDti);
-    const btnTop = screen.getByTestId(btnTopDti);
-    const firstLetter = await screen.findByTestId(firstLetterDti);
-    const btn = await screen.findByTestId(btnDti);
+    const searchInput = screen.findByTestId(searchInputDti);
+    const firstLetter = screen.findByTestId(firstLetterDti);
+    const btnSearch = screen.findByTestId(btnSearchDti);
+    const iconSearch = screen.findByTestId(btnIconDti);
 
-    userEvent.click(btnTop);
-    waitFor(() => {
-      expect(searchInput).toBeVisible();
-    });
-    userEvent.click(firstLetter);
-    userEvent.type(searchInput, 'aa');
-    userEvent.click(btn);
+    userEvent.click(await iconSearch);
+
+    expect(await searchInput).toBeVisible();
+
+    userEvent.type(await searchInput, 'aa');
+    userEvent.click(await firstLetter);
+    userEvent.click(await btnSearch);
 
     waitFor(() => {
-      expect(global.alert).toBeCalledWith('Your search must have only 1 (one) character');
+      expect(global.alert).toBeCalledWith(alertMessage);
       expect(global.alert).toHaveBeenCalledTimes(1);
     });
   });
@@ -154,22 +213,33 @@ describe('Cobertura de 45% e 90% do componente SearchBar ', () => {
     });
     await screen.findByRole('heading', { name: /Drinks/i });
 
-    const searchInput = screen.queryByTestId(searchInputDti);
-    const btnTop = screen.getByTestId(btnTopDti);
-    const btn = await screen.findByTestId(btnDti);
+    const searchInput = screen.findByTestId(searchInputDti);
+    const btnSearch = screen.findByTestId(btnSearchDti);
+    const iconSearch = screen.findByTestId(btnIconDti);
     const firstLetter = screen.findByTestId(firstLetterDti);
 
-    userEvent.click(btnTop);
-    waitFor(() => {
-      expect(searchInput).toBeVisible();
-      userEvent.click(firstLetter);
-    });
-    userEvent.type(searchInput, 'aa');
-    userEvent.click(btn);
+    userEvent.click(await iconSearch);
 
-    waitFor(() => {
+    expect(await searchInput).toBeVisible();
+
+    userEvent.type(await searchInput, 'aa');
+    userEvent.click(await firstLetter);
+    userEvent.click(await btnSearch);
+
+    await waitFor(() => {
       expect(global.alert).toBeCalledWith(alertMessage1);
       expect(global.alert).toHaveBeenCalledTimes(1);
+    });
+  });
+  test('Se exibe sinal de alerta quando a pag. nao recebe parâmetros', async () => {
+    jest.spyOn(global, 'fetch');
+    global.fetch.mockResolvedValue({
+      json: jest.fn().mockResolvedValue(FAIL_MEALS_MOCK),
+    });
+    const { history } = renderWithRouter(<App />);
+
+    act(() => {
+      history.push('/meals');
     });
   });
 });

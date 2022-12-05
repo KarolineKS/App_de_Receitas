@@ -34,11 +34,27 @@ describe('Testando a Header 45 e 90% de cobertura', () => {
 
     waitFor(() => {
       expect(searchInput).toBeInTheDocument();
-      expect(searchInput).toHaveTextContent(''); // linha 23
+      expect(searchInput).toHaveValue(''); // linha 23
       userEvent.type((searchInput, 'chiken'));
       userEvent.click(screen.getByTestId(radio));
       userEvent.click(screen.getByTestId('exec-search-btn'));
+      expect(searchInput).toHaveValue('chicken');
       expect(searchInput).screen.getByText('chiken');
     });
   });
 });
+
+// const searchInput = screen.queryByTestId('search-input');
+// // expect(searchInput).toBe(null);
+// // expect(searchInput).not.toBeVisible();
+
+// const iconSearch = screen.findByTestId('search-top-btn');
+// expect(await iconSearch).toBeInTheDocument();
+// userEvent.click(await iconSearch);
+
+// expect(searchInput).toBeInTheDocument();
+// userEvent.type(searchInput, 'chiken');
+// expect(searchInput).toHaveValue('chiken');
+// userEvent.click(screen.getByTestId('exec-search-btn'));
+// expect(screen.findByText('Chicken Handi'));
+// await new Promise((r) => { setTimeout(r, 2000); });
