@@ -82,7 +82,7 @@ describe('Testando componente Drinks', () => {
     userEvent.type(searchInput, 'lemon');
     userEvent.click(await ingredient);
 
-    expect(await screen.findByText('A True Amaretto Sour'));
+    expect(await screen.findByText('California Lemonade'));
 
     const name = screen.findByTestId(nameDti);
     userEvent.type(searchInput, '');
