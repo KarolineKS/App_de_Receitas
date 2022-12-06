@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
 import App from '../App';
 import renderWithRouter from './helpers/renderWithRouter';
-import { DRINKS_MOCK } from './helpers/mock_recipes';
+import { DRINKS_MOCK, DRINK_MOCK_ID, FAIL_DRINKS_MOCK } from './helpers/mock_recipes';
 
 const searchInputDti = 'search-input';
 const firstLetterDti = 'first-letter-search-radio';
@@ -94,6 +94,10 @@ describe('Testando componente Drinks', () => {
 
   test('Testando mensagem de erro, linhas 31 e 32 SearchBar', async () => {
     global.alert = jest.fn();
+    jest.spyOn(global, 'fetch');
+    global.fetch.mockResolvedValue({
+      json: jest.fn().mockResolvedValue(FAIL_DRINKS_MOCK),
+    });
     const { history } = renderWithRouter(<App />);
     act(() => {
       history.push('/drinks');
@@ -115,6 +119,34 @@ describe('Testando componente Drinks', () => {
     await waitFor(async () => {
       expect(global.alert).toBeCalledWith(alertMessage);
       expect(global.alert).toHaveBeenCalledTimes(1);
+    });
+  });
+  test('Se a pag. renderiza com o id', async () => {
+    jest.spyOn(global, 'fetch');
+    global.fetch.mockResolvedValue({
+      json: jest.fn().mockResolvedValue(DRINK_MOCK_ID),
+    });
+    const { history } = renderWithRouter(<App />);
+    act(() => {
+      history.push('/drinks');
+    });
+    await screen.findByRole('heading', { name: /Drinks/i });
+
+    const searchInput = screen.findByTestId(searchInputDti);
+    const btnSearch = screen.findByTestId(btnSearchDti);
+    const iconSearch = screen.findByTestId(btnIconDti);
+
+    userEvent.click(await iconSearch);
+
+    expect(await searchInput).toBeVisible();
+
+    const name = screen.findByTestId(nameDti);
+    userEvent.type(searchInput, 'A True Amaretto Sour');
+    userEvent.click(await name);
+    userEvent.click(await btnSearch);
+
+    await waitFor(() => {
+      expect(history.location.pathname).toBe('/drinks/17005');
     });
   });
 });

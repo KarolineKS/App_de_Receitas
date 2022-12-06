@@ -7,7 +7,7 @@ import SearchBar from './SearchBar';
 
 export default function Header(props) {
   const history = useHistory();
-  const { searchBtn, pageTitle, url } = props;
+  const { searchBtn, pageTitle, url, setFunc } = props;
   const [specificHeader, setSpecificHeader] = useState(false);
 
   const handleClick = () => {
@@ -49,6 +49,7 @@ export default function Header(props) {
             url={ url }
             type={ pageTitle.toLowerCase() }
             history={ history }
+            setFunc={ setFunc }
           />
 
         }
@@ -62,4 +63,5 @@ Header.propTypes = {
   pageTitle: PropTypes.string.isRequired,
   searchBtn: PropTypes.bool.isRequired,
   url: PropTypes.string.isRequired,
+  setFunc: PropTypes.func.isRequired,
 };

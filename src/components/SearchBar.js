@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import RecipesContext from '../context/RecipesContext';
 
-export default function SearchBar({ url, history, type }) {
+export default function SearchBar({ url, history, type, setFunc }) {
   const { radioSearch, setRadioSearch } = useContext(RecipesContext);
 
   const [search, setSearch] = useState('');
@@ -18,7 +18,7 @@ export default function SearchBar({ url, history, type }) {
       const response = await fetch(newUrl);
       const data = await response.json();
       setFunc(data);
-      if (data[type]?.length === 1) {
+      if (data[type].length === 1) {
         const key = Object.keys(data[type][0]).find((e) => e.includes('id'));
         const urlParam = `${type}/${data[type][0][key]}`;
         history.push(urlParam);
@@ -95,4 +95,5 @@ SearchBar.propTypes = {
   // search: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   history: PropTypes.shape({ push: PropTypes.func }).isRequired,
+  setFunc: PropTypes.func.isRequired,
 };
