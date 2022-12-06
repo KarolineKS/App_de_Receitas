@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import RecipesContext from '../context/RecipesContext';
+import Recipes from '../components/Recipes';
 
 export default function Drinks({ history }) {
-  const { recipes } = useContext(RecipesContext);
-  const maxRecipes = 12;
+  const { drinks, setDrinks, drinksCategories } = useContext(RecipesContext);
   return (
     <div>
       <Header
@@ -14,20 +14,16 @@ export default function Drinks({ history }) {
         searchBtn
         url="https://www.thecocktaildb.com/api/json/v1/1/"
         history={ history }
+        setFunc={ setDrinks }
       />
-      {recipes.drinks?.length > 0 && recipes.drinks.filter((_e, i) => i < maxRecipes)
-        .map((element, index) => (
-          <div key={ element.idDrink } data-testid={ `${index}-recipe-card` }>
-            <img
-              src={ element.strDrinkThumb }
-              alt={ element.strDrink }
-              data-testid={ `${index}-card-img` }
-            />
-            <p data-testid={ `${index}-card-name` }>
-              { element.strDrink }
-            </p>
-          </div>
-        ))}
+      <Recipes
+        recipes={ drinks }
+        arrayKey="drinks"
+        imgKey="strDrinkThumb"
+        nameKey="strDrink"
+        idKey="idDrink"
+        categories={ drinksCategories }
+      />
       <footer>
         <Footer />
       </footer>

@@ -17,7 +17,7 @@ export default function SearchBar({ url, history, type }) {
         ? `${url}filter.php?i=${search}` : `${url}search.php?${radioSearch}=${search}`;
       const response = await fetch(newUrl);
       const data = await response.json();
-      setRecipes(data);
+      setFunc(data);
       if (data[type]?.length === 1) {
         const key = Object.keys(data[type][0]).find((e) => e.includes('id'));
         const urlParam = `${type}/${data[type][0][key]}`;
