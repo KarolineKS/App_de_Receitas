@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import RecipesContext from '../context/RecipesContext';
 
 export default function SearchBar({ url, history, type }) {
-  const { radioSearch, setRadioSearch, setRecipes } = useContext(RecipesContext);
+  const { radioSearch, setRadioSearch } = useContext(RecipesContext);
 
   const [search, setSearch] = useState('');
 

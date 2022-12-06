@@ -7,7 +7,7 @@ import SearchBar from './SearchBar';
 
 export default function Header(props) {
   const history = useHistory();
-  const { searchBtn, pageTitle, url, setFunc } = props;
+  const { searchBtn, pageTitle, url } = props;
   const [specificHeader, setSpecificHeader] = useState(false);
 
   const handleClick = () => {
