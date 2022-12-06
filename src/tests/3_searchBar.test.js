@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
 import App from '../App';
 import renderWithRouter from './helpers/renderWithRouter';
-import { MEALS_MOCK } from './helpers/mock_recipes';
+import { MEALS_MOCK, MEAL_MOCK_ID } from './helpers/mock_recipes';
 
 const searchInputDti = 'search-input';
 const firstLetterDti = 'first-letter-search-radio';
@@ -254,6 +254,34 @@ describe('Cobertura de 45% e 90% do componente SearchBar ', () => {
     await waitFor(() => {
       expect(global.alert).toBeCalledWith(alertMessage);
       expect(global.alert).toHaveBeenCalledTimes(1);
+    });
+  });
+  test('Se a pag. renderiza com o id', async () => {
+    jest.spyOn(global, 'fetch');
+    global.fetch.mockResolvedValue({
+      json: jest.fn().mockResolvedValue(MEAL_MOCK_ID),
+    });
+    const { history } = renderWithRouter(<App />);
+    act(() => {
+      history.push('/drinks');
+    });
+    await screen.findByRole('heading', { name: /Meals/i });
+
+    const searchInput = screen.findByTestId(searchInputDti);
+    const btnSearch = screen.findByTestId(btnSearchDti);
+    const iconSearch = screen.findByTestId(btnIconDti);
+
+    userEvent.click(await iconSearch);
+
+    expect(await searchInput).toBeVisible();
+
+    const name = screen.findByTestId(nameDti);
+    userEvent.type(searchInput, 'Beef Lo Mein');
+    userEvent.click(await name);
+    userEvent.click(await btnSearch);
+
+    await waitFor(() => {
+      expect(history.location.pathname).toBe('/meals/52952');
     });
   });
 });

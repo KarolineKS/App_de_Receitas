@@ -15,7 +15,7 @@ export default function RecipesProvider({ children }) {
     const maxRecipes = 12;
     const response = await fetch('https://www.themealdb.com/api/json/v1/1/search.php?s=');
     const data = await response.json();
-    data.meals = data.meals.filter((_e, i) => i < maxRecipes);
+    data.meals = data.meals?.filter((_e, i) => i < maxRecipes);
     setRecipes(data);
     console.log(data);
   };
@@ -24,7 +24,7 @@ export default function RecipesProvider({ children }) {
     const maxRecipes = 12;
     const response = await fetch('https://www.thecocktaildb.com/api/json/v1/1/search.php?s=');
     const data = await response.json();
-    data.drinks = data.drinks.filter((_e, i) => i < maxRecipes);
+    data.drinks = data.drinks?.filter((_e, i) => i < maxRecipes);
     setDrinks(data);
   };
 
@@ -52,7 +52,7 @@ export default function RecipesProvider({ children }) {
     const maxCategories = 5;
     const response = await fetch(url);
     const data = await response.json();
-    data[key] = data[key].filter((_e, i) => i < maxCategories);
+    data[key] = data[key]?.filter((_e, i) => i < maxCategories);
     setFunc(data);
   };
 
