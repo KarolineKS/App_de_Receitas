@@ -7,6 +7,7 @@ import Recommendation from '../components/Recommendation';
 import './styles/RecipeDetails.css';
 import whiteHeart from '../images/whiteHeartIcon.svg';
 import blackHeart from '../images/blackHeartIcon.svg';
+import DetailsContext from '../context/DetailsContext';
 
 function RecipeDetails({ match, history, location }) {
   const { recipes, drinks, favChecked,
