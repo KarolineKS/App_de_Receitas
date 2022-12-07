@@ -144,6 +144,7 @@ RecipeDetails.propTypes = {
   match: PropTypes.shape({ path: PropTypes.string,
     params: PropTypes.shape({ id: PropTypes.string }) }).isRequired,
   history: PropTypes.shape({ push: PropTypes.func }).isRequired,
+  location: PropTypes.shape({ pathname: PropTypes.func }).isRequired,
 };
 
 export default RecipeDetails;
