@@ -1,44 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import copy from 'clipboard-copy';
 import { getFromLocal, saveOnStorage } from '../services/storage';
+import DetailsContext from '../context/DetailsContext';
 
-function RecipeDetails({ match, history, location }) {
-  const [detailsRecipes, setDetailsRecipe] = useState({
-    drinks: [],
-    meals: [],
-  });
-
-  const [ingredientes, setIngredientes] = useState([]);
-  const [pound, setPound] = useState([]);
+function RecipeDetails({ history, location, match }) {
   const [showCopy, setShowCopy] = useState(false);
+  const {
+    ingredientes,
+    pound,
+    detailsRecipes,
+    FetchUrl,
+  } = useContext(DetailsContext);
 
   const type = match.path.split('/')[1];
-  const FetchUrl = async (url) => {
-    const response = await fetch(url);
-    const data = await response.json();
-    setDetailsRecipe(data);
-    const recipes = Object.keys(data[type][0]).filter((e) => (
-      e.includes('strIngredient')
-    ));
-    const newRecipes = recipes.map((e) => (
-      data[type][0][e]
-    )).filter((a) => a !== '' && a !== null);
-    const ingredientPounds = Object.keys(data[type][0]).filter((e) => (
-      e.includes('strMeasure')
-    ));
-    const newPound = ingredientPounds.map((e) => (
-      data[type][0][e]
-    )).filter((a) => a !== '' && a !== null);
-    setIngredientes(newRecipes);
-    setPound(newPound);
-  };
 
-  const { params: { id } } = match;
+  const {
+    params: { id },
+  } = match;
 
   useEffect(() => {
-    const url = type === 'meals' ? `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}` : `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`;
-    FetchUrl(url);
+    const url = type === 'meals'
+      ? `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`
+      : `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`;
+    FetchUrl(url, type);
   }, []);
 
   const saveFavorites = (recipe) => {
@@ -59,55 +44,45 @@ function RecipeDetails({ match, history, location }) {
 
   return (
     <div>
-      {
-        detailsRecipes[type].map((recipe) => (
-
-          <div key={ recipe.idMeal || recipe.idDrink }>
-            <h1 data-testid="recipe-title">
-              {recipe.strMeal || recipe.strDrink}
-            </h1>
-            <img
-              src={ recipe.strMealThumb || recipe.strDrinkThumb }
-              alt=""
-              data-testid="recipe-photo"
-            />
-            <p data-testid="recipe-category">
-              {recipe.strCategory}
-            </p>
-            <div>
-              <ul>
-                {
-                  ingredientes.map((ing, index) => (
-                    <li
-                      key={ index }
-                      data-testid={ `${index}-ingredient-name-and-measure` }
-                    >
-                      {ing}
-                      {' '}
-                      {pound[index]}
-                    </li>
-                  ))
-                }
-              </ul>
-            </div>
-            <p data-testid="instructions">
-              {recipe.strInstructions}
-            </p>
-            { type === 'meals' && (
-              <iframe
-                data-testid="video"
-                src={ recipe.strYoutube.replace('watch?v=', 'embed/') }
-                title="video youtube"
-                allowFullScreen
-                frameBorder="0"
-              />
-            )}
-            { type === 'drinks' && (
-              <p data-testid="recipe-category">{recipe.strAlcoholic}</p>
-            )}
+      {detailsRecipes[type].map((recipe) => (
+        <div key={ recipe.idMeal || recipe.idDrink }>
+          <h1 data-testid="recipe-title">
+            {recipe.strMeal || recipe.strDrink}
+          </h1>
+          <img
+            src={ recipe.strMealThumb || recipe.strDrinkThumb }
+            alt=""
+            data-testid="recipe-photo"
+          />
+          <p data-testid="recipe-category">{recipe.strCategory}</p>
+          <div>
+            <ul>
+              {ingredientes.map((ing, index) => (
+                <li
+                  key={ index }
+                  data-testid={ `${index}-ingredient-name-and-measure` }
+                >
+                  {ing}
+                  {pound[index]}
+                </li>
+              ))}
+            </ul>
           </div>
-        ))
-      }
+          <p data-testid="instructions">{recipe.strInstructions}</p>
+          {type === 'meals' && (
+            <iframe
+              data-testid="video"
+              src={ recipe.strYoutube.replace('watch?v=', 'embed/') }
+              title="video youtube"
+              allowFullScreen
+              frameBorder="0"
+            />
+          )}
+          {type === 'drinks' && (
+            <p data-testid="recipe-category">{recipe.strAlcoholic}</p>
+          )}
+        </div>
+      ))}
       <button
         data-testid="start-recipe-btn"
         type="button"
@@ -127,7 +102,7 @@ function RecipeDetails({ match, history, location }) {
       >
         Share
       </button>
-      { showCopy && <p>Link copied!</p>}
+      {showCopy && <p>Link copied!</p>}
       <button
         data-testid="favorite-btn"
         type="button"
@@ -141,8 +116,10 @@ function RecipeDetails({ match, history, location }) {
 }
 
 RecipeDetails.propTypes = {
-  match: PropTypes.shape({ path: PropTypes.string,
-    params: PropTypes.shape({ id: PropTypes.string }) }).isRequired,
+  match: PropTypes.shape({
+    path: PropTypes.string,
+    params: PropTypes.shape({ id: PropTypes.string }),
+  }).isRequired,
   history: PropTypes.shape({ push: PropTypes.func }).isRequired,
   location: PropTypes.shape({ pathname: PropTypes.func }).isRequired,
 };
