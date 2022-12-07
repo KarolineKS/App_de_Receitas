@@ -10,6 +10,7 @@ export default function RecipesProvider({ children }) {
   const [mealsCategories, setMealsCategories] = useState({ meals: [] });
   const [drinksCategories, setDrinksCategories] = useState({ drinks: [] });
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [favChecked, setFavChecked] = useState(false);
 
   const fetchRecipes = async () => {
     const maxRecipes = 12;
@@ -44,8 +45,11 @@ export default function RecipesProvider({ children }) {
     fetchDrinks,
     selectedCategory,
     setSelectedCategory,
+    favChecked,
+    setFavChecked,
   }), [email, password, radioSearch, recipes,
-    drinks, mealsCategories, drinksCategories, selectedCategory]);
+    drinks, mealsCategories, drinksCategories,
+    selectedCategory, favChecked]);
 
   const fetchCategories = async (url, setFunc, key) => {
     const maxCategories = 5;
