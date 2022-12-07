@@ -9,40 +9,20 @@ import whiteHeart from '../images/whiteHeartIcon.svg';
 import blackHeart from '../images/blackHeartIcon.svg';
 
 function RecipeDetails({ match, history, location }) {
-  const [detailsRecipes, setDetailsRecipe] = useState({
-    drinks: [],
-    meals: [],
-  });
-
   const { recipes, drinks, favChecked,
     setFavChecked } = useContext(RecipesContext);
-
-  const [ingredientes, setIngredientes] = useState([]);
-  const [pound, setPound] = useState([]);
   const [showCopy, setShowCopy] = useState(false);
+  const {
+    ingredientes,
+    pound,
+    detailsRecipes,
+    FetchUrl,
+  } = useContext(DetailsContext);
 
   const type = match.path.split('/')[1];
-  const FetchUrl = async (url) => {
-    const response = await fetch(url);
-    const data = await response.json();
-    setDetailsRecipe(data);
-    const Recipes = Object.keys(data[type][0]).filter((e) => (
-      e.includes('strIngredient')
-    ));
-    const newRecipes = Recipes.map((e) => (
-      data[type][0][e]
-    )).filter((a) => a !== '' && a !== null);
-    const ingredientPounds = Object.keys(data[type][0]).filter((e) => (
-      e.includes('strMeasure')
-    ));
-    const newPound = ingredientPounds.map((e) => (
-      data[type][0][e]
-    )).filter((a) => a !== '' && a !== null);
-    setIngredientes(newRecipes);
-    setPound(newPound);
-  };
-
-  const { params: { id } } = match;
+  const {
+    params: { id },
+  } = match;
 
   useEffect(() => {
     const favorites = typeof getFromLocal('favoriteRecipes') === 'string'
@@ -57,7 +37,7 @@ function RecipeDetails({ match, history, location }) {
     const url = type === 'meals'
       ? `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`
       : `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`;
-    FetchUrl(url);
+    FetchUrl(url, type);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
@@ -113,7 +93,6 @@ function RecipeDetails({ match, history, location }) {
                       data-testid={ `${index}-ingredient-name-and-measure` }
                     >
                       {ing}
-                      {' '}
                       {pound[index]}
                     </li>
                   ))
@@ -143,6 +122,7 @@ function RecipeDetails({ match, history, location }) {
         recipes={ type === 'meals' ? drinks : recipes }
         type={ type === 'meals' ? 'drinks' : 'meals' }
       />
+
       <button
         data-testid="start-recipe-btn"
         type="button"
@@ -183,8 +163,10 @@ function RecipeDetails({ match, history, location }) {
 }
 
 RecipeDetails.propTypes = {
-  match: PropTypes.shape({ path: PropTypes.string,
-    params: PropTypes.shape({ id: PropTypes.string }) }).isRequired,
+  match: PropTypes.shape({
+    path: PropTypes.string,
+    params: PropTypes.shape({ id: PropTypes.string }),
+  }).isRequired,
   history: PropTypes.shape({ push: PropTypes.func }).isRequired,
   location: PropTypes.shape({ pathname: PropTypes.string }).isRequired,
 };
