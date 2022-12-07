@@ -17,7 +17,6 @@ export default function RecipesProvider({ children }) {
     const data = await response.json();
     data.meals = data.meals?.filter((_e, i) => i < maxRecipes);
     setRecipes(data);
-    // console.log(data);
   };
 
   const fetchDrinks = async () => {

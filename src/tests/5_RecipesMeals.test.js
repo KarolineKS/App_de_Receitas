@@ -19,7 +19,7 @@ describe('Testando o componente Recipes', () => {
 
     expect(await screen.findByText('Meals'));
 
-    const allBtn = screen.findByTestId('All-category-filter');
+    const allBtn = screen.findByTestId(allCategoriesFilterDTI);
     const beef = await screen.findByRole('button', { name: /Beef/i });
     const breakfast = screen.findByRole('button', { name: /breakfast/i });
     const chicken = screen.findByRole('button', { name: /chicken/i });
@@ -39,11 +39,14 @@ describe('Testando o componente Recipes', () => {
     act(() => {
       history.push('/meals');
     });
-
     expect(await screen.findByText('Meals'));
+
+    const allBtn = screen.findByTestId('All-category-filter');
     const beef = screen.findByRole('button', { name: /Beef/i });
     userEvent.click(await beef);
     expect(await screen.findByText('Beef and Mustard Pie'));
+    userEvent.click(await allBtn);
+    expect(await screen.findByText('Corba'));
   });
 
   test('A chamada da API - btnAll - Breakfast', async () => {
@@ -92,6 +95,9 @@ describe('Testando o componente Recipes', () => {
     const goat = screen.findByRole('button', { name: /goat/i });
     userEvent.click(await goat);
     expect(await screen.findByText('Mbuzi Choma (Roasted Goat)'));
+
+    expect(await screen.findByTestId('Goat-category-filter')).toBeInTheDocument();
+    expect(await screen.findAllByTestId(/-category-filter/)).toHaveLength(6);
   });
 
   test('A chamada da API - btnAll - Meals', async () => {
@@ -143,7 +149,7 @@ describe('Testando o componente Recipes', () => {
 
     setTimeout(() => {
       for (let i = 0; i < 12; i += 1) {
-        const img = screen.findByTestId(`${i}-card-name`);
+        const img = screen.findByTestId(`${i}-recipe-card`);
         expect(img).toBeInTheDocument();
       }
     }, 2000);
