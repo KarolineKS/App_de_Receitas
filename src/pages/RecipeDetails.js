@@ -7,15 +7,7 @@ import Recommendation from '../components/Recommendation';
 import './styles/RecipeDetails.css';
 
 function RecipeDetails({ match, history, location }) {
-  const [detailsRecipes, setDetailsRecipe] = useState({
-    drinks: [],
-    meals: [],
-  });
-
   const { recipes, drinks } = useContext(RecipesContext);
-
-  const [ingredientes, setIngredientes] = useState([]);
-  const [pound, setPound] = useState([]);
 
   const [showCopy, setShowCopy] = useState(false);
   const {
