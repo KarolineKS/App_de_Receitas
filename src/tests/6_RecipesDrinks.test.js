@@ -1,6 +1,6 @@
 import React from 'react';
 import { act } from 'react-dom/test-utils';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import renderWithRouter from './helpers/renderWithRouter';
 import App from '../App';
@@ -92,5 +92,39 @@ describe('Testando tela recipes para Drinks', () => {
 
     expect(await screen.findByTestId('0-card-name')).toBeInTheDocument();
     expect(await screen.findAllByTestId(/-card-name/)).toHaveLength(12);
+  });
+
+  test('Se o toggle quando selecionado novamente setorna as receitas sem filtro', async () => {
+    const { history } = renderWithRouter(<App />);
+    act(() => {
+      history.push('/drinks');
+    });
+
+    expect(await screen.findByText('Drinks'));
+
+    const cocktail = screen.findByRole('button', { name: /Cocktail/i });
+    userEvent.click(await cocktail);
+    expect(await screen.findByText('GG'));
+    userEvent.click(await cocktail);
+    expect(await screen.findByText('9 1/2 Weeks'));
+  });
+
+  test('Se redireciona a receita com o id', async () => {
+    const { history } = renderWithRouter(<App />);
+    act(() => {
+      history.push('/drinks');
+    });
+
+    expect(await screen.findByText('Drinks'));
+
+    const cocoa = screen.findByRole('button', { name: 'Cocoa' });
+    userEvent.click(await cocoa);
+    expect(await screen.findByText('Castillian Hot Chocolate'));
+    const recipeCard = screen.findByTestId('0-recipe-card');
+    userEvent.click(await recipeCard);
+
+    await waitFor(() => {
+      expect(history.location.pathname).toBe('/drinks/12730');
+    });
   });
 });
