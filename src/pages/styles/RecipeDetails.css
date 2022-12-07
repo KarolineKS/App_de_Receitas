@@ -1,0 +1,23 @@
+.container-recommend {
+  display: flex;
+  gap: 20px;
+  margin: 0 auto;
+  max-width: 320px;
+  overflow-x: scroll;
+  width: 95%;
+}
+
+.box-recommend {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.box-recommend img {
+  max-width: 150px;
+  width: clamp(50px, 42vw, 150px);
+}
+
+.box-recommend p {
+  margin: 0;
+}

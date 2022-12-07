@@ -1,13 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import copy from 'clipboard-copy';
 import { getFromLocal, saveOnStorage } from '../services/storage';
+import RecipesContext from '../context/RecipesContext';
+import Recommendation from '../components/Recommendation';
+import './styles/RecipeDetails.css';
 
 function RecipeDetails({ match, history, location }) {
   const [detailsRecipes, setDetailsRecipe] = useState({
     drinks: [],
     meals: [],
   });
+
+  const { recipes, drinks } = useContext(RecipesContext);
 
   const [ingredientes, setIngredientes] = useState([]);
   const [pound, setPound] = useState([]);
@@ -18,10 +23,10 @@ function RecipeDetails({ match, history, location }) {
     const response = await fetch(url);
     const data = await response.json();
     setDetailsRecipe(data);
-    const recipes = Object.keys(data[type][0]).filter((e) => (
+    const Recipes = Object.keys(data[type][0]).filter((e) => (
       e.includes('strIngredient')
     ));
-    const newRecipes = recipes.map((e) => (
+    const newRecipes = Recipes.map((e) => (
       data[type][0][e]
     )).filter((a) => a !== '' && a !== null);
     const ingredientPounds = Object.keys(data[type][0]).filter((e) => (
@@ -37,9 +42,12 @@ function RecipeDetails({ match, history, location }) {
   const { params: { id } } = match;
 
   useEffect(() => {
-    const url = type === 'meals' ? `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}` : `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`;
+    const url = type === 'meals'
+      ? `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`
+      : `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`;
     FetchUrl(url);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
 
   const saveFavorites = (recipe) => {
     const obj = {
@@ -60,7 +68,7 @@ function RecipeDetails({ match, history, location }) {
   return (
     <div>
       {
-        detailsRecipes[type].map((recipe) => (
+        detailsRecipes[type]?.map((recipe) => (
 
           <div key={ recipe.idMeal || recipe.idDrink }>
             <h1 data-testid="recipe-title">
@@ -68,7 +76,7 @@ function RecipeDetails({ match, history, location }) {
             </h1>
             <img
               src={ recipe.strMealThumb || recipe.strDrinkThumb }
-              alt=""
+              alt="recipe"
               data-testid="recipe-photo"
             />
             <p data-testid="recipe-category">
@@ -96,7 +104,8 @@ function RecipeDetails({ match, history, location }) {
             { type === 'meals' && (
               <iframe
                 data-testid="video"
-                src={ recipe.strYoutube.replace('watch?v=', 'embed/') }
+                src={ recipe.strYoutube.replace('watch?v=', 'embed/')
+                  .replace('youtube, youtube-nocookie') }
                 title="video youtube"
                 allowFullScreen
                 frameBorder="0"
@@ -108,6 +117,10 @@ function RecipeDetails({ match, history, location }) {
           </div>
         ))
       }
+      <Recommendation
+        recipes={ type === 'meals' ? drinks : recipes }
+        type={ type === 'meals' ? 'drinks' : 'meals' }
+      />
       <button
         data-testid="start-recipe-btn"
         type="button"
@@ -144,7 +157,7 @@ RecipeDetails.propTypes = {
   match: PropTypes.shape({ path: PropTypes.string,
     params: PropTypes.shape({ id: PropTypes.string }) }).isRequired,
   history: PropTypes.shape({ push: PropTypes.func }).isRequired,
-  location: PropTypes.shape({ pathname: PropTypes.func }).isRequired,
+  location: PropTypes.shape({ pathname: PropTypes.string }).isRequired,
 };
 
 export default RecipeDetails;
