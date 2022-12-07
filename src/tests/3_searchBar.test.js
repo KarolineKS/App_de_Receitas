@@ -263,8 +263,9 @@ describe('Cobertura de 45% e 90% do componente SearchBar ', () => {
     });
     const { history } = renderWithRouter(<App />);
     act(() => {
-      history.push('/drinks');
+      history.push('/meals');
     });
+
     await screen.findByRole('heading', { name: /Meals/i });
 
     const searchInput = screen.findByTestId(searchInputDti);
