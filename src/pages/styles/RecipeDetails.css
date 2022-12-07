@@ -21,3 +21,11 @@
 .box-recommend p {
   margin: 0;
 }
+
+.favorite-btn {
+  display: none;
+}
+
+.heart-icon {
+  width: 25px;
+}

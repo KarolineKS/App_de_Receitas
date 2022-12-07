@@ -17,6 +17,7 @@ function RecipeInProgress({ history, location }) {
       ? `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`
       : `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`;
     FetchUrl(url, type);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -109,7 +110,7 @@ RecipeInProgress.propTypes = {
     params: PropTypes.shape({ id: PropTypes.string }),
   }).isRequired,
   history: PropTypes.shape({ push: PropTypes.func }).isRequired,
-  location: PropTypes.shape({ pathname: PropTypes.func }).isRequired,
+  location: PropTypes.shape({ pathname: PropTypes.string }).isRequired,
 };
 
 export default RecipeInProgress;
