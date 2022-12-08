@@ -4,6 +4,7 @@ import copy from 'clipboard-copy';
 import PropTypes from 'prop-types';
 import DetailsContext from '../context/DetailsContext';
 import '../App.css';
+import { saveOnStorage, getFromLocal } from '../services/storage';
 
 function RecipeInProgress({ history, location }) {
   const { detailsRecipes, checked,
@@ -22,9 +23,23 @@ function RecipeInProgress({ history, location }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // const handleChecked = (e) => {
-  //   e.target.name
-  // };
+  const handleChecked = (index) => {
+    setChecked({ ...checked,
+      [`checked${index}`]:
+    !checked[`checked${index}`] });
+    const salveChecked = { ...checked,
+      [`checked${index}`]:
+  !checked[`checked${index}`] };
+    const local = typeof getFromLocal('inProgressRecipes')
+    === 'string' ? [] : getFromLocal('inProgressRecipes');
+    const localfiltered = local.filter((e) => (e.id !== id && e.type !== type));
+    const newlocal = [...localfiltered,
+      { ...salveChecked,
+        id,
+        type },
+    ];
+    saveOnStorage('inProgressRecipes', newlocal);
+  };
 
   return (
     <div>
@@ -62,9 +77,7 @@ function RecipeInProgress({ history, location }) {
                         name={ ing }
                         // onChange={ handleChange }
                         id="ingredientes-checked"
-                        onChange={ () => setChecked({ ...checked,
-                          [`checked${index}`]:
-                        !checked[`checked${index}`] }) }
+                        onChange={ () => handleChecked(index) }
                         checked={ checked[`checked${index}`] }
                       />
                       {ing}
