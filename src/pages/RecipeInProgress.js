@@ -5,10 +5,16 @@ import PropTypes from 'prop-types';
 import DetailsContext from '../context/DetailsContext';
 import '../App.css';
 import { saveOnStorage, getFromLocal } from '../services/storage';
+import whiteHeart from '../images/whiteHeartIcon.svg';
+import blackHeart from '../images/blackHeartIcon.svg';
+import RecipesContext from '../context/RecipesContext';
 
-function RecipeInProgress({ history, location }) {
+function RecipeInProgress({ history }) {
   const { detailsRecipes, checked,
-    ingredientes, pound, setChecked, FetchUrl } = useContext(DetailsContext);
+    ingredientes, pound, setChecked,
+    FetchUrl } = useContext(DetailsContext);
+  const { favChecked,
+    setFavChecked } = useContext(RecipesContext);
   const [showCopy, setShowCopy] = useState(false);
   const match = useRouteMatch();
 
@@ -16,6 +22,15 @@ function RecipeInProgress({ history, location }) {
   const { params: { id } } = match;
 
   useEffect(() => {
+    const favorites = typeof getFromLocal('favoriteRecipes') === 'string'
+      ? [] : getFromLocal('favoriteRecipes');
+    const isFav = favorites
+      .some((recipe) => recipe.id === id);
+    if (isFav) {
+      setFavChecked(true);
+    } else {
+      setFavChecked(false);
+    }
     const url = type === 'meals'
       ? `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`
       : `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`;
@@ -39,6 +54,32 @@ function RecipeInProgress({ history, location }) {
         type },
     ];
     saveOnStorage('inProgressRecipes', newlocal);
+  };
+
+  const saveFavorites = (recipe) => {
+    const newType = type === 'meals' ? 'meal' : 'drink';
+    const obj = {
+      id: recipe.idMeal || recipe.idDrink,
+      type: newType,
+      nationality: recipe.strArea || '',
+      category: recipe.strCategory,
+      alcoholicOrNot: recipe.strAlcoholic || '',
+      name: recipe.strMeal || recipe.strDrink,
+      image: recipe.strMealThumb || recipe.strDrinkThumb,
+    };
+    const local = typeof getFromLocal('favoriteRecipes') === 'string'
+      ? [] : getFromLocal('favoriteRecipes');
+    console.log(local);
+    const isFav = local.some((e) => e.id === id && e.type === newType);
+    if (isFav) {
+      const newLocal = local.filter((e) => e.id !== id && e.type !== newType);
+      saveOnStorage('favoriteRecipes', newLocal);
+      setFavChecked(false);
+    } else {
+      const newLocal = [...local, obj];
+      saveOnStorage('favoriteRecipes', newLocal);
+      setFavChecked(true);
+    }
   };
 
   return (
@@ -114,21 +155,28 @@ function RecipeInProgress({ history, location }) {
             type="button"
             style={ { marginLeft: '200px' } }
             onClick={ () => {
-              copy(`http://localhost:3000${location.pathname}`);
+              copy(`http://localhost:3000/${type}/${id}`);
               setShowCopy(true);
             } }
           >
             Share
           </button>
           { showCopy && <p>Link copied!</p>}
-          <button
-            data-testid="favorite-btn"
-            type="button"
-            style={ { marginLeft: '200px' } }
-            onClick={ () => saveFavorites(detailsRecipes[type][0]) }
-          >
-            Favorite
-          </button>
+          <label htmlFor="favorite-btn">
+            <img
+              src={ favChecked ? blackHeart : whiteHeart }
+              alt="heart"
+              className="heart-icon"
+              data-testid="favorite-btn"
+            />
+            <input
+              type="checkbox"
+              id="favorite-btn"
+              className="favorite-btn"
+              checked={ favChecked }
+              onChange={ () => saveFavorites(detailsRecipes[type][0]) }
+            />
+          </label>
         </div>))}
     </div>
   );
@@ -140,7 +188,6 @@ RecipeInProgress.propTypes = {
     params: PropTypes.shape({ id: PropTypes.string }),
   }).isRequired,
   history: PropTypes.shape({ push: PropTypes.func }).isRequired,
-  location: PropTypes.shape({ pathname: PropTypes.string }).isRequired,
 };
 
 export default RecipeInProgress;

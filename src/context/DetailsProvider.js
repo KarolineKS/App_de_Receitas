@@ -19,11 +19,11 @@ export default function DetailsProvider({ children }) {
     const key = type === 'meals' ? 'idMeal' : 'idDrink';
     const recipes = local && local?.find((a) => (a.id === data[key]) && a.type === type);
     if (!local || recipes.length === 0) {
-      ing.forEach((e, i) => {
+      ing.forEach((_e, i) => {
         obj[`checked${i}`] = false;
       });
     } else {
-      ing.forEach((e, i) => {
+      ing.forEach((_e, i) => {
         obj[`checked${i}`] = recipes[`checked${i}`];
       });
     }
@@ -59,7 +59,7 @@ export default function DetailsProvider({ children }) {
     FetchUrl,
     checked,
     setChecked,
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }), [ingredientes, pound, detailsRecipes, checked]);
 
   return (
