@@ -66,3 +66,9 @@
     transform: rotate(-10deg);
   }
 }
+.recipeNoChecked {
+  text-decoration: none
+}
+.recipeChecked {
+  text-decoration: line-through solid rgb(0, 0, 0)
+}
