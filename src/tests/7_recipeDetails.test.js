@@ -4,8 +4,10 @@ import userEvent from '@testing-library/user-event';
 import renderWithRouter from './helpers/renderWithRouter';
 import App from '../App';
 
-const mealsEndPoint = 'https://www.themealdb.com/api/json/v1/1/lookup.php?i={id-da-receita}';
-const driknsEndPoint = 'https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i={id-da-receita}';
+// const mealsEndPoint = 'https://www.themealdb.com/api/json/v1/1/lookup.php?i={id-da-receita}';
+// const driknsEndPoint = 'https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i={id-da-receita}';
+const mealsID = '/meals/52977';
+const startBtnDTI = 'start-recipe-btn';
 
 describe('Testando a tela recipeDetails', () => {
   test('Se a requisição para a API de comidas foi realizada', async () => {
@@ -20,12 +22,12 @@ describe('Testando a tela recipeDetails', () => {
     expect(await recipeCard).toBeVisible();
     userEvent.click(await recipeCard);
     await waitFor(() => {
-      expect(history.location.pathname).toBe('/meals/52977');
+      expect(history.location.pathname).toBe(mealsID);
     });
   });
   test('Se renderiza os elementos do card', async () => {
     const { history } = renderWithRouter(<App />);
-    act(() => { history.push('/meals/52977'); });
+    act(() => { history.push(mealsID); });
 
     const recipeTitle = screen.findByTestId('recipe-title');
     expect(await recipeTitle).toBeInTheDocument();
@@ -45,7 +47,7 @@ describe('Testando a tela recipeDetails', () => {
     const video = screen.findByTestId('video');
     expect(await video).toBeInTheDocument();
 
-    const startBtn = screen.findByTestId('start-recipe-btn');
+    const startBtn = screen.findByTestId(startBtnDTI);
     expect(await startBtn).toBeInTheDocument();
 
     const shareBtn = screen.findByTestId('share-btn');
@@ -56,7 +58,7 @@ describe('Testando a tela recipeDetails', () => {
   });
   test('Se renderiza os elementos do card', async () => {
     const { history } = renderWithRouter(<App />);
-    act(() => { history.push('/meals/52977'); });
+    act(() => { history.push(mealsID); });
 
     const recipeTitle = screen.findByTestId('recipe-title');
     expect(await recipeTitle).toBeInTheDocument();
@@ -72,7 +74,7 @@ describe('Testando a tela recipeDetails', () => {
       history.push('/meals/53060');
     });
     expect(screen.findByRole('heading', { name: /Burek/i, level: 1 }));
-    const startBtn = screen.findByTestId('start-recipe-btn');
+    const startBtn = screen.findByTestId(startBtnDTI);
     userEvent.click(await startBtn);
     await waitFor(() => {
       expect(history.location.pathname).toBe('/meals/53060/in-progress');
@@ -107,7 +109,7 @@ describe('Testando recipeDetails: drink', () => {
     expect(screen.findByRole('list', { name: 'Cognac 1/3' }));
 
     // expect(await screen.findByText('Layered in a shot glass'));
-    const startBtn = screen.findByTestId('start-recipe-btn');
+    const startBtn = screen.findByTestId(startBtnDTI);
     expect(await startBtn).toBeInTheDocument();
 
     const shareBtn = screen.findByTestId('share-btn');
