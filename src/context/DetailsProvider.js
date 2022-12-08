@@ -6,9 +6,18 @@ export default function DetailsProvider({ children }) {
     drinks: [],
     meals: [],
   });
+  const [checked, setChecked] = useState({});
 
   const [ingredientes, setIngredientes] = useState([]);
   const [pound, setPound] = useState([]);
+
+  const handleChecked = (ing) => {
+    const obj = {};
+    ing.forEach((e, i) => {
+      obj[`checked${i}`] = false;
+    });
+    setChecked(obj);
+  };
 
   const FetchUrl = async (url, type) => {
     const response = await fetch(url);
@@ -25,6 +34,7 @@ export default function DetailsProvider({ children }) {
       .filter((a) => a !== '' && a !== null);
     setIngredientes(newRecipes);
     setPound(newPound);
+    handleChecked(newRecipes);
   };
 
   const value = useMemo(() => ({
@@ -35,7 +45,10 @@ export default function DetailsProvider({ children }) {
     detailsRecipes,
     setDetailsRecipe,
     FetchUrl,
-  }), [ingredientes, pound, detailsRecipes]);
+    checked,
+    setChecked,
+
+  }), [ingredientes, pound, detailsRecipes, checked]);
 
   return (
     <DetailsContext.Provider

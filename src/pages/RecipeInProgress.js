@@ -3,12 +3,14 @@ import { useRouteMatch } from 'react-router-dom';
 import copy from 'clipboard-copy';
 import PropTypes from 'prop-types';
 import DetailsContext from '../context/DetailsContext';
+import '../App.css';
 
 function RecipeInProgress({ history, location }) {
-  const { detailsRecipes, ingredientes, pound, FetchUrl } = useContext(DetailsContext);
+  const { detailsRecipes, checked,
+    ingredientes, pound, setChecked, FetchUrl } = useContext(DetailsContext);
   const [showCopy, setShowCopy] = useState(false);
   const match = useRouteMatch();
-  console.log(match);
+
   const type = match.path.split('/')[1];
   const { params: { id } } = match;
 
@@ -19,6 +21,10 @@ function RecipeInProgress({ history, location }) {
     FetchUrl(url, type);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // const handleChecked = (e) => {
+  //   e.target.name
+  // };
 
   return (
     <div>
@@ -40,19 +46,30 @@ function RecipeInProgress({ history, location }) {
                   <li
                     key={ index }
                     data-testid={ `${index}-ingredient-name-and-measure` }
+                    name={ ing }
+                    className={ checked[`checked${index}`]
+                      ? 'recipeChecked' : 'recipeNoChecked' }
                   >
                     <label
-                      htmlFor="key"
+                      htmlFor={ index }
                       data-testid={ `${index}-ingredient-step` }
+                      className={ checked[`checked${index}`]
+                        ? 'recipeChecked' : 'recipeNoChecked' }
                     >
                       <input
                         key={ index }
                         type="checkbox"
+                        name={ ing }
                         // onChange={ handleChange }
+                        id="ingredientes-checked"
+                        onChange={ () => setChecked({ ...checked,
+                          [`checked${index}`]:
+                        !checked[`checked${index}`] }) }
+                        checked={ checked[`checked${index}`] }
                       />
+                      {ing}
+                      {pound[index]}
                     </label>
-                    {ing}
-                    {pound[index]}
                   </li>
                 ))
               }
