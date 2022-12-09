@@ -20,6 +20,7 @@ function RecipeDetails({ match, history, location }) {
     FetchUrl,
   } = useContext(DetailsContext);
 
+  console.log(detailsRecipes);
   const type = match.path.split('/')[1];
   const {
     params: { id },
@@ -55,7 +56,7 @@ function RecipeDetails({ match, history, location }) {
     };
     const local = typeof getFromLocal('favoriteRecipes') === 'string'
       ? [] : getFromLocal('favoriteRecipes');
-    console.log(local);
+    // console.log(local);
     const isFav = local.some((e) => e.id === id && e.type === newType);
     if (isFav) {
       const newLocal = local.filter((e) => e.id !== id && e.type !== newType);
@@ -144,6 +145,20 @@ function RecipeDetails({ match, history, location }) {
       >
         Share
       </button>
+
+      {/* <button
+        type="button"
+        data-testid="favorite-btn"
+        onClick={ () => saveFavorites(detailsRecipes[type][0]) }
+        src={ favChecked ? blackHeart : whiteHeart }
+      >
+        <img
+          src={ favChecked ? blackHeart : whiteHeart }
+          alt="heart"
+          className="heart-icon"
+        />
+      </button> */}
+
       <label htmlFor="favorite-btn">
         <img
           src={ favChecked ? blackHeart : whiteHeart }
