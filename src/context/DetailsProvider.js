@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { getFromLocal } from '../services/storage';
 import DetailsContext from './DetailsContext';
 
 export default function DetailsProvider({ children }) {
@@ -11,11 +12,22 @@ export default function DetailsProvider({ children }) {
   const [ingredientes, setIngredientes] = useState([]);
   const [pound, setPound] = useState([]);
 
-  const handleChecked = (ing) => {
+  const handleChecked = (ing, type, data) => {
     const obj = {};
-    ing.forEach((e, i) => {
-      obj[`checked${i}`] = false;
-    });
+    const local = typeof getFromLocal('inProgressRecipes')
+    === 'string' ? false : getFromLocal('inProgressRecipes');
+    const key = type === 'meals' ? 'idMeal' : 'idDrink';
+    const recipes = local && local?.find((a) => (a.id === data[key]) && a.type === type);
+    if (!local || !recipes) {
+      ing.forEach((_e, i) => {
+        obj[`checked${i}`] = false;
+      });
+    } else {
+      ing.forEach((_e, i) => {
+        obj[`checked${i}`] = recipes[`checked${i}`];
+      });
+    }
+
     setChecked(obj);
   };
 
@@ -34,7 +46,7 @@ export default function DetailsProvider({ children }) {
       .filter((a) => a !== '' && a !== null);
     setIngredientes(newRecipes);
     setPound(newPound);
-    handleChecked(newRecipes);
+    handleChecked(newRecipes, type, data[type][0]);
   };
 
   const value = useMemo(() => ({
@@ -47,7 +59,7 @@ export default function DetailsProvider({ children }) {
     FetchUrl,
     checked,
     setChecked,
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }), [ingredientes, pound, detailsRecipes, checked]);
 
   return (

@@ -4,10 +4,17 @@ import copy from 'clipboard-copy';
 import PropTypes from 'prop-types';
 import DetailsContext from '../context/DetailsContext';
 import '../App.css';
+import { saveOnStorage, getFromLocal } from '../services/storage';
+import whiteHeart from '../images/whiteHeartIcon.svg';
+import blackHeart from '../images/blackHeartIcon.svg';
+import RecipesContext from '../context/RecipesContext';
 
-function RecipeInProgress({ history, location }) {
+function RecipeInProgress({ history }) {
   const { detailsRecipes, checked,
-    ingredientes, pound, setChecked, FetchUrl } = useContext(DetailsContext);
+    ingredientes, pound, setChecked,
+    FetchUrl } = useContext(DetailsContext);
+  const { favChecked,
+    setFavChecked } = useContext(RecipesContext);
   const [showCopy, setShowCopy] = useState(false);
   const match = useRouteMatch();
 
@@ -15,6 +22,15 @@ function RecipeInProgress({ history, location }) {
   const { params: { id } } = match;
 
   useEffect(() => {
+    const favorites = typeof getFromLocal('favoriteRecipes') === 'string'
+      ? [] : getFromLocal('favoriteRecipes');
+    const isFav = favorites
+      .some((recipe) => recipe.id === id);
+    if (isFav) {
+      setFavChecked(true);
+    } else {
+      setFavChecked(false);
+    }
     const url = type === 'meals'
       ? `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`
       : `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`;
@@ -22,9 +38,75 @@ function RecipeInProgress({ history, location }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // const handleChecked = (e) => {
-  //   e.target.name
-  // };
+  const handleChecked = (index) => {
+    setChecked({ ...checked,
+      [`checked${index}`]:
+    !checked[`checked${index}`] });
+    const salveChecked = { ...checked,
+      [`checked${index}`]:
+  !checked[`checked${index}`] };
+    const local = typeof getFromLocal('inProgressRecipes')
+    === 'string' ? [] : getFromLocal('inProgressRecipes');
+    const localfiltered = local.filter((e) => (e.id !== id || e.type !== type));
+    const newlocal = [...localfiltered,
+      { ...salveChecked,
+        id,
+        type },
+    ];
+    saveOnStorage('inProgressRecipes', newlocal);
+  };
+
+  const saveFavorites = (recipe) => {
+    const newType = type === 'meals' ? 'meal' : 'drink';
+    const obj = {
+      id: recipe.idMeal || recipe.idDrink,
+      type: newType,
+      nationality: recipe.strArea || '',
+      category: recipe.strCategory,
+      alcoholicOrNot: recipe.strAlcoholic || '',
+      name: recipe.strMeal || recipe.strDrink,
+      image: recipe.strMealThumb || recipe.strDrinkThumb,
+    };
+    const local = typeof getFromLocal('favoriteRecipes') === 'string'
+      ? [] : getFromLocal('favoriteRecipes');
+    console.log(local);
+    const isFav = local.some((e) => e.id === id && e.type === newType);
+    if (isFav) {
+      const newLocal = local.filter((e) => e.id !== id || e.type !== newType);
+      saveOnStorage('favoriteRecipes', newLocal);
+      setFavChecked(false);
+    } else {
+      const newLocal = [...local, obj];
+      saveOnStorage('favoriteRecipes', newLocal);
+      setFavChecked(true);
+    }
+  };
+
+  const handleFinish = () => {
+    const local = typeof getFromLocal('doneRecipes') === 'string' ? []
+      : getFromLocal('doneRecipes');
+    const newType = type === 'meals' ? 'meal' : 'drink';
+    const recipe = detailsRecipes[type][0];
+    const doneDate = new Date().toISOString();
+
+    const obj = {
+      id,
+      nationality: recipe.strArea || '',
+      name: recipe.strMeal || recipe.strDrink,
+      category: recipe.strCategory,
+      image: recipe.strMealThumb || recipe.strDrinkThumb,
+      tags: recipe.strTags?.split(',') || [],
+      alcoholicOrNot: recipe.strAlcoholic || '',
+      type: newType,
+      doneDate,
+    };
+
+    const newLocal = local.filter((e) => e.id !== id || e.type !== newType);
+    console.log(local);
+    console.log(newLocal);
+    saveOnStorage('doneRecipes', [...newLocal, obj]);
+    history.push('/done-recipes');
+  };
 
   return (
     <div>
@@ -51,7 +133,7 @@ function RecipeInProgress({ history, location }) {
                       ? 'recipeChecked' : 'recipeNoChecked' }
                   >
                     <label
-                      htmlFor={ index }
+                      htmlFor={ `ingredientes-checked-${index}` }
                       data-testid={ `${index}-ingredient-step` }
                       className={ checked[`checked${index}`]
                         ? 'recipeChecked' : 'recipeNoChecked' }
@@ -61,10 +143,8 @@ function RecipeInProgress({ history, location }) {
                         type="checkbox"
                         name={ ing }
                         // onChange={ handleChange }
-                        id="ingredientes-checked"
-                        onChange={ () => setChecked({ ...checked,
-                          [`checked${index}`]:
-                        !checked[`checked${index}`] }) }
+                        id={ `ingredientes-checked-${index}` }
+                        onChange={ () => handleChecked(index) }
                         checked={ checked[`checked${index}`] }
                       />
                       {ing}
@@ -93,6 +173,8 @@ function RecipeInProgress({ history, location }) {
             type="button"
             style={ { position: 'fixed', bottom: '0' } }
             onClick={ () => history.push(`/${type}/${id}/done-recipes`) }
+            disabled={ Object.values(checked).some((e) => e === false) }
+            onClick={ handleFinish }
           >
             Finish Recipe
           </button>
@@ -101,21 +183,28 @@ function RecipeInProgress({ history, location }) {
             type="button"
             style={ { marginLeft: '200px' } }
             onClick={ () => {
-              copy(`http://localhost:3000${location.pathname}`);
+              copy(`http://localhost:3000/${type}/${id}`);
               setShowCopy(true);
             } }
           >
             Share
           </button>
           { showCopy && <p>Link copied!</p>}
-          <button
-            data-testid="favorite-btn"
-            type="button"
-            style={ { marginLeft: '200px' } }
-            onClick={ () => saveFavorites(detailsRecipes[type][0]) }
-          >
-            Favorite
-          </button>
+          <label htmlFor="favorite-btn">
+            <img
+              src={ favChecked ? blackHeart : whiteHeart }
+              alt="heart"
+              className="heart-icon"
+              data-testid="favorite-btn"
+            />
+            <input
+              type="checkbox"
+              id="favorite-btn"
+              className="favorite-btn"
+              checked={ favChecked }
+              onChange={ () => saveFavorites(detailsRecipes[type][0]) }
+            />
+          </label>
         </div>))}
     </div>
   );
@@ -127,7 +216,6 @@ RecipeInProgress.propTypes = {
     params: PropTypes.shape({ id: PropTypes.string }),
   }).isRequired,
   history: PropTypes.shape({ push: PropTypes.func }).isRequired,
-  location: PropTypes.shape({ pathname: PropTypes.string }).isRequired,
 };
 
 export default RecipeInProgress;
