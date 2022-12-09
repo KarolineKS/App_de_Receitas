@@ -58,7 +58,7 @@ function RecipeDetails({ match, history, location }) {
     console.log(local);
     const isFav = local.some((e) => e.id === id && e.type === newType);
     if (isFav) {
-      const newLocal = local.filter((e) => e.id !== id && e.type !== newType);
+      const newLocal = local.filter((e) => e.id !== id || e.type !== newType);
       saveOnStorage('favoriteRecipes', newLocal);
       setFavChecked(false);
     } else {
@@ -123,7 +123,6 @@ function RecipeDetails({ match, history, location }) {
         recipes={ type === 'meals' ? drinks : recipes }
         type={ type === 'meals' ? 'drinks' : 'meals' }
       />
-
       <button
         data-testid="start-recipe-btn"
         type="button"
