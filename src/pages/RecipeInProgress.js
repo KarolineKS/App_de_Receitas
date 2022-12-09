@@ -92,7 +92,7 @@ function RecipeInProgress({ history, location }) {
             data-testid="finish-recipe-btn"
             type="button"
             style={ { position: 'fixed', bottom: '0' } }
-            onClick={ () => history.push(`/${type}/${id}/in-progress`) }
+            onClick={ () => history.push(`/${type}/${id}/done-recipes`) }
           >
             Finish Recipe
           </button>
