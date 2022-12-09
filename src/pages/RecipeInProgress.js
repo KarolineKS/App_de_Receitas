@@ -47,7 +47,7 @@ function RecipeInProgress({ history }) {
   !checked[`checked${index}`] };
     const local = typeof getFromLocal('inProgressRecipes')
     === 'string' ? [] : getFromLocal('inProgressRecipes');
-    const localfiltered = local.filter((e) => (e.id !== id && e.type !== type));
+    const localfiltered = local.filter((e) => (e.id !== id || e.type !== type));
     const newlocal = [...localfiltered,
       { ...salveChecked,
         id,
@@ -72,7 +72,7 @@ function RecipeInProgress({ history }) {
     console.log(local);
     const isFav = local.some((e) => e.id === id && e.type === newType);
     if (isFav) {
-      const newLocal = local.filter((e) => e.id !== id && e.type !== newType);
+      const newLocal = local.filter((e) => e.id !== id || e.type !== newType);
       saveOnStorage('favoriteRecipes', newLocal);
       setFavChecked(false);
     } else {
@@ -80,6 +80,32 @@ function RecipeInProgress({ history }) {
       saveOnStorage('favoriteRecipes', newLocal);
       setFavChecked(true);
     }
+  };
+
+  const handleFinish = () => {
+    const local = typeof getFromLocal('doneRecipes') === 'string' ? []
+      : getFromLocal('doneRecipes');
+    const newType = type === 'meals' ? 'meal' : 'drink';
+    const recipe = detailsRecipes[type][0];
+    const doneDate = new Date().toISOString();
+
+    const obj = {
+      id,
+      nationality: recipe.strArea || '',
+      name: recipe.strMeal || recipe.strDrink,
+      category: recipe.strCategory,
+      image: recipe.strMealThumb || recipe.strDrinkThumb,
+      tags: recipe.strTags?.split(',') || [],
+      alcoholicOrNot: recipe.strAlcoholic || '',
+      type: newType,
+      doneDate,
+    };
+
+    const newLocal = local.filter((e) => e.id !== id || e.type !== newType);
+    console.log(local);
+    console.log(newLocal);
+    saveOnStorage('doneRecipes', [...newLocal, obj]);
+    history.push('/done-recipes');
   };
 
   return (
@@ -107,7 +133,7 @@ function RecipeInProgress({ history }) {
                       ? 'recipeChecked' : 'recipeNoChecked' }
                   >
                     <label
-                      htmlFor={ index }
+                      htmlFor={ `ingredientes-checked-${index}` }
                       data-testid={ `${index}-ingredient-step` }
                       className={ checked[`checked${index}`]
                         ? 'recipeChecked' : 'recipeNoChecked' }
@@ -117,7 +143,7 @@ function RecipeInProgress({ history }) {
                         type="checkbox"
                         name={ ing }
                         // onChange={ handleChange }
-                        id="ingredientes-checked"
+                        id={ `ingredientes-checked-${index}` }
                         onChange={ () => handleChecked(index) }
                         checked={ checked[`checked${index}`] }
                       />
@@ -146,7 +172,8 @@ function RecipeInProgress({ history }) {
             data-testid="finish-recipe-btn"
             type="button"
             style={ { position: 'fixed', bottom: '0' } }
-            onClick={ () => history.push(`/${type}/${id}/in-progress`) }
+            disabled={ Object.values(checked).some((e) => e === false) }
+            onClick={ handleFinish }
           >
             Finish Recipe
           </button>
