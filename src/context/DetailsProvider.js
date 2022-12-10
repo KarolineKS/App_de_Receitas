@@ -19,7 +19,8 @@ export default function DetailsProvider({ children }) {
     const key = type === 'meals' ? 'idMeal' : 'idDrink';
     const recipes = local && !!local[type][data[key]]
       && local[type][data[key]];
-    if (!local || !recipes || local[type][data[key]].length === 0) {
+    if (!local || !recipes
+      || local[type][data[key]].length === 0) {
       ing.forEach((_e, i) => {
         obj[`checked${i}`] = false;
       });
