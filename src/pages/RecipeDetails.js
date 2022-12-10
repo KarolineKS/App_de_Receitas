@@ -37,7 +37,7 @@ function RecipeDetails({ match, history, location }) {
 
     const localStarted = typeof getFromLocal('inProgressRecipes') === 'string'
       ? { meals: {}, drinks: {} } : getFromLocal('inProgressRecipes');
-    const recipeIsStarted = !!localStarted.meals[id];
+    const recipeIsStarted = !!localStarted[type][id];
     setIsStarted(recipeIsStarted);
   };
 
