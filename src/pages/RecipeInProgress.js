@@ -39,21 +39,23 @@ function RecipeInProgress({ history }) {
   }, []);
 
   const handleChecked = (index) => {
-    setChecked({ ...checked,
+    const salveChecked = {
+      ...checked,
       [`checked${index}`]:
-    !checked[`checked${index}`] });
-    const salveChecked = { ...checked,
-      [`checked${index}`]:
-  !checked[`checked${index}`] };
+      !checked[`checked${index}`],
+    };
+    setChecked(salveChecked);
     const local = typeof getFromLocal('inProgressRecipes')
-    === 'string' ? [] : getFromLocal('inProgressRecipes');
-    const localfiltered = local.filter((e) => (e.id !== id || e.type !== type));
-    const newlocal = [...localfiltered,
-      { ...salveChecked,
-        id,
-        type },
-    ];
-    saveOnStorage('inProgressRecipes', newlocal);
+    === 'string' ? { meals: {}, drinks: {} } : getFromLocal('inProgressRecipes');
+    const newLocal = {
+      meals: { ...local.meals },
+      drinks: { ...local.drinks },
+      [type]: {
+        ...local[type],
+        [id]: [salveChecked],
+      },
+    };
+    saveOnStorage('inProgressRecipes', newLocal);
   };
 
   const saveFavorites = (recipe) => {

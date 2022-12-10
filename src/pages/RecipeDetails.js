@@ -13,6 +13,8 @@ function RecipeDetails({ match, history, location }) {
   const { recipes, drinks, favChecked,
     setFavChecked } = useContext(RecipesContext);
   const [showCopy, setShowCopy] = useState(false);
+  const [isDone, setIsDone] = useState(false);
+  const [isStarted, setIsStarted] = useState(false);
   const {
     ingredientes,
     pound,
@@ -25,6 +27,19 @@ function RecipeDetails({ match, history, location }) {
   const {
     params: { id },
   } = match;
+
+  const handleStartButton = () => {
+    const localDone = typeof getFromLocal('doneRecipes') === 'string'
+      ? [] : getFromLocal('doneRecipes');
+    const newType = type === 'meals' ? 'meal' : 'drink';
+    const recipeIsDone = localDone.some((e) => e.id === id && e.type === newType);
+    setIsDone(recipeIsDone);
+
+    const localStarted = typeof getFromLocal('inProgressRecipes') === 'string'
+      ? { meals: {}, drinks: {} } : getFromLocal('inProgressRecipes');
+    const recipeIsStarted = !!localStarted.meals[id];
+    setIsStarted(recipeIsStarted);
+  };
 
   useEffect(() => {
     const favorites = typeof getFromLocal('favoriteRecipes') === 'string'
@@ -40,6 +55,7 @@ function RecipeDetails({ match, history, location }) {
       ? `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`
       : `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`;
     FetchUrl(url, type);
+    handleStartButton();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
@@ -73,7 +89,6 @@ function RecipeDetails({ match, history, location }) {
     <div>
       {
         detailsRecipes[type]?.map((recipe) => (
-
           <div key={ recipe.idMeal || recipe.idDrink }>
             <h1 data-testid="recipe-title">
               {recipe.strMeal || recipe.strDrink}
@@ -81,6 +96,7 @@ function RecipeDetails({ match, history, location }) {
             <img
               src={ recipe.strMealThumb || recipe.strDrinkThumb }
               alt="recipe"
+              style={ { maxWidth: '90%' } }
               data-testid="recipe-photo"
             />
             <p data-testid="recipe-category">
@@ -124,14 +140,16 @@ function RecipeDetails({ match, history, location }) {
         recipes={ type === 'meals' ? drinks : recipes }
         type={ type === 'meals' ? 'drinks' : 'meals' }
       />
-      <button
-        data-testid="start-recipe-btn"
-        type="button"
-        style={ { position: 'fixed', bottom: '0' } }
-        onClick={ () => history.push(`/${type}/${id}/in-progress`) }
-      >
-        Start Recipe
-      </button>
+      {isDone || (
+        <button
+          data-testid="start-recipe-btn"
+          type="button"
+          style={ { position: 'fixed', bottom: '0' } }
+          onClick={ () => history.push(`/${type}/${id}/in-progress`) }
+        >
+          {isStarted ? 'Continue Recipe' : 'Start Recipe'}
+        </button>
+      )}
       { showCopy && <p>Link copied!</p>}
       <button
         data-testid="share-btn"
