@@ -46,7 +46,7 @@ export default function RecipeCard({ recipe, index, isDonePage, setFavRecipes })
           </p>
           {recipe.tags?.map((e, i) => (
             <p
-              data-testid={ `data-testid=${index}-${e}-horizontal-tag` }
+              data-testid={ `${index}-${e}-horizontal-tag` }
               key={ `${e}=${index}-${i}` }
             >
               {e}
