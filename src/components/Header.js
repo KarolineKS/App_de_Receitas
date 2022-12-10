@@ -59,9 +59,14 @@ export default function Header(props) {
   );
 }
 
+Header.defaultProps = {
+  url: 'https://www.themealdb.com/api/json/v1/1/',
+  setFunc: () => true,
+};
+
 Header.propTypes = {
   pageTitle: PropTypes.string.isRequired,
   searchBtn: PropTypes.bool.isRequired,
-  url: PropTypes.string.isRequired,
-  setFunc: PropTypes.func.isRequired,
+  url: PropTypes.string,
+  setFunc: PropTypes.func,
 };

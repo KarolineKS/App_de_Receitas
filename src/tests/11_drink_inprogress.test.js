@@ -5,14 +5,14 @@ import App from '../App';
 import renderWithRouter from './helpers/renderWithRouter';
 
 const startBtnDTI = 'start-recipe-btn';
-const inProgressURL = '/meals/53060/in-progress';
+const inProgressURL = '/drinks/13501/in-progress';
 
-describe('Testes relacionados a pág.in progress', () => {
+describe('Testes relacionados a pág. in progress da fetchDrinks', () => {
   test('Se a pág in-progress é redirecionada de forma correta', async () => {
     const { history } = renderWithRouter(<App />);
-    act(() => { history.push('/meals/53060'); });
+    act(() => { history.push('/drinks/13501'); });
 
-    await screen.findByRole('heading', { name: /Burek/i });
+    await screen.findByRole('heading', { name: /ABC/i });
 
     const startBtn = screen.findByTestId(startBtnDTI);
     userEvent.click(await startBtn);
@@ -20,57 +20,50 @@ describe('Testes relacionados a pág.in progress', () => {
       expect(history.location.pathname).toBe(inProgressURL);
     });
   });
-
   test('A pág. in progress - reenderização dos elementos', async () => {
     const { history } = renderWithRouter(<App />);
     act(() => { history.push(inProgressURL); });
 
-    await screen.findByRole('heading', { name: /Burek/i });
+    await screen.findByRole('heading', { name: /ABC/i });
 
     const photo = screen.findByTestId('recipe-photo');
     expect(await photo).toBeInTheDocument();
 
-    expect(await screen.findByText('Side')).toBeVisible();
+    expect(await screen.findByText('Shot')).toBeVisible();
 
-    const instructions = screen.findByText(/Fry the finely chopped onions and minced meat in oil./i);
+    const instructions = screen.findByText(/Layered in a shot glass./i);
     expect(await instructions).toBeVisible();
 
-    const youTube = screen.findByTestId('video');
-    expect(await youTube).toBeInTheDocument();
+    const alcohol = screen.findByText(/Alcoholic/i);
+    expect(await alcohol).toBeVisible();
   });
 
   test('Se a lista é riscada através do checked', async () => {
     const { history } = renderWithRouter(<App />);
     act(() => { history.push(inProgressURL); });
 
-    await screen.findByRole('heading', { name: /Burek/i });
+    await screen.findByRole('heading', { name: /ABC/i });
 
     const ingredients = screen.findByTestId('0-ingredient-name-and-measure');
-    expect(await ingredients).toBeInTheDocument();
-    expect(await screen.findAllByText('Filo Pastry1 Packet')[0]);
-    userEvent.click(await ingredients);
-    // expect(await ingredients.checked).toEqual(true);
-    // expect(ingredients).toHaveStyle(text-decoration: line-through solid rgb(0, 0, 0))
-  });
-
-  test('Se o botão Finish Recipe é renderizado e se torna habilitado após todos os ingredientes estarem checked', async () => {
-    const { history } = renderWithRouter(<App />);
-    act(() => { history.push(inProgressURL); });
-
-    await screen.findByRole('heading', { name: /Burek/i });
-
-    const finishRecipeBtn = screen.findByTestId('finish-recipe-btn');
     const ingredient = await screen.findAllByRole('checkbox');
 
-    expect(await finishRecipeBtn).toBeDisabled();
+    const finishRecipeBtn = screen.findByTestId('finish-recipe-btn');
+
+    expect(await ingredients).toBeInTheDocument();
+    expect(await screen.findAllByText('Amaretto1/3')[0]);
+    expect(await screen.findAllByText('Baileys irish cream1/3')[1]);
+    expect(await screen.findAllByText('Cognac1/3')[2]);
+
     setTimeout(() => {
+      expect(finishRecipeBtn).toBeDisabled();
       fireEvent.click(screen.findAllByTestId('0-ingredient-step'));
       expect(ingredient).toBeChecked();
       expect(finishRecipeBtn).toBeEnabled();
     }, 3000);
     userEvent.click(await finishRecipeBtn);
+
     await waitFor(() => {
-      expect(history.location.pathname).toBe('/meals/53060/in-progress');
+      expect(history.location.pathname).toBe('/drinks/13501/in-progress');
     });
   });
 
@@ -83,7 +76,7 @@ describe('Testes relacionados a pág.in progress', () => {
     const { history } = renderWithRouter(<App />);
     act(() => { history.push(inProgressURL); });
 
-    await screen.findByRole('heading', { name: /Burek/i });
+    await screen.findByRole('heading', { name: /ABC/i });
 
     const shareBtn = screen.findByTestId('share-btn');
     userEvent.click(await shareBtn);
@@ -94,7 +87,7 @@ describe('Testes relacionados a pág.in progress', () => {
     const { history } = renderWithRouter(<App />);
     act(() => { history.push(inProgressURL); });
 
-    await screen.findByRole('heading', { name: /Burek/i });
+    await screen.findByRole('heading', { name: /ABC/i });
 
     const favoriteBtnIcon = await screen.findByTestId('favorite-btn');
 
@@ -108,3 +101,5 @@ describe('Testes relacionados a pág.in progress', () => {
     });
   });
 });
+
+//   RecipeInProgress.js |   38.33 |    29.68 |   35.29 |   41.07 | 28,30,42-56,60-81,86-108,147-175,206;
