@@ -17,14 +17,14 @@ export default function DetailsProvider({ children }) {
     const local = typeof getFromLocal('inProgressRecipes')
     === 'string' ? false : getFromLocal('inProgressRecipes');
     const key = type === 'meals' ? 'idMeal' : 'idDrink';
-    const recipes = local && local?.find((a) => (a.id === data[key]) && a.type === type);
+    const recipes = local && local[type][data[key]];
     if (!local || !recipes) {
       ing.forEach((_e, i) => {
         obj[`checked${i}`] = false;
       });
     } else {
       ing.forEach((_e, i) => {
-        obj[`checked${i}`] = recipes[`checked${i}`];
+        obj[`checked${i}`] = recipes[0][`checked${i}`];
       });
     }
 
