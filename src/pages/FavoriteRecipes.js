@@ -1,7 +1,18 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import FiltersBtns from '../components/FiltersBtns';
+import { getFromLocal } from '../services/storage';
 import Header from '../components/Header';
+import RecipeCard from '../components/RecipeCard';
 
 export default function FavoriteRecipes() {
+  const [favRecipes, setFavRecipes] = useState([]);
+  const [filterParam, setFilterParam] = useState('');
+  useEffect(() => {
+    const local = typeof getFromLocal('favoriteRecipes') === 'string' ? []
+      : getFromLocal('favoriteRecipes');
+    setFavRecipes(local);
+  }, []);
+
   return (
     <div>
       <header>
@@ -12,6 +23,15 @@ export default function FavoriteRecipes() {
           setFunc={ () => true }
         />
       </header>
+      <FiltersBtns setFilterParam={ setFilterParam } />
+      {favRecipes.filter((e) => e.type.includes(filterParam)).map((e, index) => (
+        <RecipeCard
+          key={ `${e.name}-${e.type}-${e.id}` }
+          recipe={ e }
+          index={ index }
+          setFavRecipes={ setFavRecipes }
+        />
+      ))}
     </div>
   );
 }
