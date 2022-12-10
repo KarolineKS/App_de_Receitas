@@ -17,7 +17,7 @@ export default function DetailsProvider({ children }) {
     const local = typeof getFromLocal('inProgressRecipes')
     === 'string' ? false : getFromLocal('inProgressRecipes');
     const key = type === 'meals' ? 'idMeal' : 'idDrink';
-    const recipes = local && local[type][data[key]];
+    const recipes = local && local[type][data[key]][0];
     if (!local || !recipes) {
       ing.forEach((_e, i) => {
         obj[`checked${i}`] = false;
