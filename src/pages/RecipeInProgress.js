@@ -172,9 +172,7 @@ function RecipeInProgress({ history }) {
             data-testid="finish-recipe-btn"
             type="button"
             style={ { position: 'fixed', bottom: '0' } }
-            onClick={ () => history.push(`/${type}/${id}/done-recipes`) }
             disabled={ Object.values(checked).some((e) => e === false) }
-            // eslint-disable-next-line react/jsx-no-duplicate-props
             onClick={ handleFinish }
           >
             Finish Recipe
