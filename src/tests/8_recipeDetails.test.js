@@ -3,7 +3,7 @@ import { act } from 'react-dom/test-utils';
 import userEvent from '@testing-library/user-event';
 import renderWithRouter from './helpers/renderWithRouter';
 import App from '../App';
-import { MEALS_DETAILS_MOCK } from './helpers/drink_details_mock';
+// import { MEALS_DETAILS_MOCK } from './helpers/drink_details_mock';
 
 const startBtnDTI = 'start-recipe-btn';
 const mealsID = '/meals/52977'; // receita Corba
