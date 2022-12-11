@@ -20,7 +20,7 @@ describe('Testando tela recipes para Drinks', () => {
     const ordinary = await screen.findByRole('button', { name: /Ordinary Drink/i });
     const cocktail = screen.findByRole('button', { name: /Cocktail/i });
     const shake = screen.findByRole('button', { name: /Shake/i });
-    const other = screen.findByRole('button', { name: 'Other/Unknown' });
+    const other = screen.findByRole('button', { name: /Other/i });
     const cocoa = screen.findByRole('button', { name: 'Cocoa' });
 
     expect(await ordinary).toBeInTheDocument();
@@ -55,7 +55,10 @@ describe('Testando tela recipes para Drinks', () => {
     userEvent.click(await shake);
     expect(await screen.findByText('Avalanche'));
 
-    const other = screen.findByRole('button', { name: 'Other/Unknown' });
+    const other = await screen.findByRole('button', { name: /Other/i });
+
+    setTimeout(() => {
+    }, 3000);
     userEvent.click(await other);
     expect(await screen.findByText('Absolut Evergreen'));
 

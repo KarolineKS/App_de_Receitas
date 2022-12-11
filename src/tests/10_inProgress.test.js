@@ -69,9 +69,9 @@ describe('Testes relacionados a pág.in progress', () => {
       expect(finishRecipeBtn).toBeEnabled();
     }, 3000);
     userEvent.click(await finishRecipeBtn);
-    await waitFor(() => {
-      expect(history.location.pathname).toBe('/meals/53060/in-progress');
-    });
+    setTimeout(() => {
+      expect(history.location.pathname).toBe('/drinks/13501/done-recipes');
+    }, 3000);
   });
 
   test('Se o link da pág é copiado', async () => {

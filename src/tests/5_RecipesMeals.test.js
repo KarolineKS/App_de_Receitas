@@ -88,7 +88,7 @@ describe('Testando o componente Recipes', () => {
     userEvent.click(await beef);
     expect(await screen.findByText('Beef and Mustard Pie'));
     userEvent.click(await beef);
-    expect(await screen.findByText('Sushi'));
+    expect(await screen.findByText('Corba'));
   });
 
   test('', async () => {

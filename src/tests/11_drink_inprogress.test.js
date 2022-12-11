@@ -62,9 +62,9 @@ describe('Testes relacionados a pág. in progress da fetchDrinks', () => {
     }, 3000);
     userEvent.click(await finishRecipeBtn);
 
-    await waitFor(() => {
-      expect(history.location.pathname).toBe('/drinks/13501/in-progress');
-    });
+    setTimeout(() => {
+      expect(history.location.pathname).toBe('/drinks/13501/done-recipes');
+    }, 3000);
   });
 
   test('Se o link da pág é copiado', async () => {

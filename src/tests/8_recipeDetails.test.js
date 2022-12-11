@@ -59,6 +59,7 @@ describe('Testando a renderização dos elementos de RecipeDetails', () => {
   });
 
   test('Se o botão Start Recipe redireciona para a página id/in-progress', async () => {
+    localStorage.setItem('inProgressRecipes', JSON.stringify({ meals: { 53060: 'test' } }));
     const { history } = renderWithRouter(<App />);
     act(() => {
       history.push(burekID);
@@ -114,15 +115,14 @@ describe('Testando a renderização dos elementos de RecipeDetails', () => {
       expect(favoriteBtnIcon).toHaveAttribute('src', 'whiteHeartIcon.svg');
     });
   });
-  test('Testando as linhas 47-68 utilizando o Mock', async () => {
-    jest.spyOn(global, 'fetch');
-    global.fetch.mockResolvedValue({
-      json: jest.fn().mockResolvedValue(MEALS_DETAILS_MOCK),
-    });
+  test('Testando as linhas 47-68 local storage', async () => {
+    localStorage.setItem('inProgressRecipes', JSON.stringify({ meals: { 53060: 'test' } }));
     const { history } = renderWithRouter(<App />);
 
     act(() => {
       history.push(burekID);
     });
+    const continueRecipe = await screen.findByRole('button', { name: /continue recipe/i });
+    expect(continueRecipe).toBeInTheDocument();
   });
 });
