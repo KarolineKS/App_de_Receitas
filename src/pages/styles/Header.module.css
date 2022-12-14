@@ -58,8 +58,7 @@
 }
 
 .header .title_page {
-  background-color: #201c1f;
-  color: white;
+  color: #c22323;
   padding: 20px;
   text-align: center;
   text-transform: uppercase;
@@ -67,12 +66,19 @@
 }
 
 .header .title_page h1 {
-  font-weight: 900;
+  font-size: 24px;
+  font-weight: 600;
   letter-spacing: 5px;
   margin-top: 8px;
 }
 
-.header .title_page img {
+.header .title_page .drinks {
+  margin-bottom: 10px;
+  margin-top: 10px;
+  width: 40px;
+}
+
+.header .title_page .meals {
   margin-bottom: 10px;
   margin-top: 10px;
   width: 55px;

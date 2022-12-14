@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
+import style from '../pages/styles/Recipes.module.css';
 import RecipesContext from '../context/RecipesContext';
 
 export default function Recipes({ recipes, arrayKey, imgKey,
@@ -65,16 +66,19 @@ export default function Recipes({ recipes, arrayKey, imgKey,
           </button>
         ))}
       </div>
-      {recipes[arrayKey]?.length > 0
+      <div className={ style.container_recipes }>
+        {recipes[arrayKey]?.length > 0
       && recipes[arrayKey].filter((_e, i) => i < maxRecipes)
         .map((element, index) => (
           <div
+            className={ style.card }
             key={ `${element[idKey]}-${index}` }
             data-testid={ `${index}-recipe-card` }
             onClick={ () => handleClick(element[idKey]) }
             aria-hidden="true"
           >
             <img
+              className={ style.recipe }
               src={ element[imgKey] }
               alt={ element[nameKey] }
               data-testid={ `${index}-card-img` }
@@ -84,6 +88,7 @@ export default function Recipes({ recipes, arrayKey, imgKey,
             </p>
           </div>
         ))}
+      </div>
     </div>
   );
 }

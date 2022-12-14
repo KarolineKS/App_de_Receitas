@@ -1,0 +1,33 @@
+.container_recipes {
+  color: white;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 30px 0;
+}
+
+.container_recipes .recipe {
+  border-radius: 10px 10px 0 0;
+  object-fit: cover;
+  width: 100%;
+
+}
+
+.container_recipes .card {
+  align-items: center;
+  background-color: #fcc436;
+  border-radius: 10px;
+  box-shadow: 10px 10px 10px 2px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  margin: 15px 7px;
+  width: 150px;
+}
+
+.container_recipes .card p {
+  color: #c22323;
+  font-family: Epilogue , sans-serif;
+  font-size: 19px;
+  font-weight: 500;
+  margin-top: 10px;
+}

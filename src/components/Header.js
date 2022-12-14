@@ -7,6 +7,7 @@ import SearchBar from './SearchBar';
 import style from '../pages/styles/Header.module.css';
 import logoIcon from '../images/ícone Recipes app.png';
 import iconePrato from '../images/icone-prato.png';
+import iconeBebida from '../images/icone-bebida.png';
 
 export default function Header(props) {
   const history = useHistory();
@@ -54,7 +55,11 @@ export default function Header(props) {
         </div>
       </div>
       <div className={ style.title_page }>
-        <img src={ iconePrato } alt="icone de prato" />
+
+        { pageTitle === 'Drinks'
+          ? (<img className={ style.drinks } src={ iconeBebida } alt="icone de prato" />)
+          : (<img className={ style.meals } src={ iconePrato } alt="icone de bebida" />)}
+
         <h1 data-testid="page-title">{pageTitle}</h1>
         {
           specificHeader
