@@ -4,6 +4,9 @@ import { useHistory } from 'react-router-dom';
 import searchIcon from '../images/searchIcon.svg';
 import profileIcon from '../images/profileIcon.svg';
 import SearchBar from './SearchBar';
+import style from '../pages/styles/Header.module.css';
+import logoIcon from '../images/ícone Recipes app.png';
+import iconePrato from '../images/icone-prato.png';
 
 export default function Header(props) {
   const history = useHistory();
@@ -20,28 +23,38 @@ export default function Header(props) {
 
   return (
 
-    <section>
-      <button // sempre presente
-        data-testid="profile-top-btn"
-        type="button"
-        src={ profileIcon }
-        onClick={ handleClick }
-      >
-        <img src={ profileIcon } alt="profile" />
-      </button>
-
-      { !searchBtn ? ''
-        : (
-          <button // presente somente em algumas páginas
-            data-testid="search-top-btn"
+    <header className={ style.header }>
+      <div className={ style.header_container }>
+        <div className={ style.logo }>
+          <img className={ style.logo_icon } src={ logoIcon } alt="icone do logo" />
+          <span>Recipes</span>
+          <strong>app</strong>
+        </div>
+        <div>
+          <button // sempre presente
+            data-testid="profile-top-btn"
             type="button"
-            src={ searchIcon }
-            onClick={ itsSpecific }
+            src={ profileIcon }
+            onClick={ handleClick }
           >
-            <img src={ searchIcon } alt="search" />
+            <img className={ style.icon } src={ profileIcon } alt="profile" />
           </button>
-        )}
-      <div>
+
+          { !searchBtn ? ''
+            : (
+              <button // presente somente em algumas páginas
+                data-testid="search-top-btn"
+                type="button"
+                src={ searchIcon }
+                onClick={ itsSpecific }
+              >
+                <img className={ style.icon } src={ searchIcon } alt="search" />
+              </button>
+            )}
+        </div>
+      </div>
+      <div className={ style.title_page }>
+        <img src={ iconePrato } alt="icone de prato" />
         <h1 data-testid="page-title">{pageTitle}</h1>
         {
           specificHeader
@@ -55,7 +68,7 @@ export default function Header(props) {
         }
       </div>
 
-    </section>
+    </header>
   );
 }
 
