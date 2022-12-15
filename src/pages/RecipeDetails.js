@@ -87,18 +87,61 @@ function RecipeDetails({ match, history, location }) {
 
   return (
     <div>
+
+      {/* <button
+        type="button"
+        data-testid="favorite-btn"
+        onClick={ () => saveFavorites(detailsRecipes[type][0]) }
+        src={ favChecked ? blackHeart : whiteHeart }
+        >
+        <img
+        src={ favChecked ? blackHeart : whiteHeart }
+        alt="heart"
+        className="heart-icon"
+        />
+      </button> */}
       {
         detailsRecipes[type]?.map((recipe) => (
           <div key={ recipe.idMeal || recipe.idDrink }>
-            <h1 data-testid="recipe-title">
-              {recipe.strMeal || recipe.strDrink}
-            </h1>
-            <img
-              src={ recipe.strMealThumb || recipe.strDrinkThumb }
-              alt="recipe"
-              style={ { maxWidth: '90%' } }
-              data-testid="recipe-photo"
-            />
+            { showCopy && <p>Link copied!</p>}
+
+            <div>
+              <h1 data-testid="recipe-title">
+                {recipe.strMeal || recipe.strDrink}
+              </h1>
+              <label htmlFor="favorite-btn">
+                <img
+                  src={ favChecked ? blackHeart : whiteHeart }
+                  alt="heart"
+                  className="heart-icon"
+                  data-testid="favorite-btn"
+                />
+                <button
+                  data-testid="share-btn"
+                  type="button"
+                  style={ { marginLeft: '200px' } }
+                  onClick={ () => {
+                    copy(`http://localhost:3000${location.pathname}`);
+                    setShowCopy(true);
+                  } }
+                >
+                  Share
+                </button>
+                <input
+                  type="checkbox"
+                  id="favorite-btn"
+                  className="favorite-btn"
+                  checked={ favChecked }
+                  onChange={ () => saveFavorites(detailsRecipes[type][0]) }
+                />
+              </label>
+              <img
+                src={ recipe.strMealThumb || recipe.strDrinkThumb }
+                alt="recipe"
+                style={ { maxWidth: '90%' } }
+                data-testid="recipe-photo"
+              />
+            </div>
             <p data-testid="recipe-category">
               {recipe.strCategory}
             </p>
@@ -150,47 +193,7 @@ function RecipeDetails({ match, history, location }) {
           {isStarted ? 'Continue Recipe' : 'Start Recipe'}
         </button>
       )}
-      { showCopy && <p>Link copied!</p>}
-      <button
-        data-testid="share-btn"
-        type="button"
-        style={ { marginLeft: '200px' } }
-        onClick={ () => {
-          copy(`http://localhost:3000${location.pathname}`);
-          setShowCopy(true);
-        } }
-      >
-        Share
-      </button>
 
-      {/* <button
-        type="button"
-        data-testid="favorite-btn"
-        onClick={ () => saveFavorites(detailsRecipes[type][0]) }
-        src={ favChecked ? blackHeart : whiteHeart }
-      >
-        <img
-          src={ favChecked ? blackHeart : whiteHeart }
-          alt="heart"
-          className="heart-icon"
-        />
-      </button> */}
-
-      <label htmlFor="favorite-btn">
-        <img
-          src={ favChecked ? blackHeart : whiteHeart }
-          alt="heart"
-          className="heart-icon"
-          data-testid="favorite-btn"
-        />
-        <input
-          type="checkbox"
-          id="favorite-btn"
-          className="favorite-btn"
-          checked={ favChecked }
-          onChange={ () => saveFavorites(detailsRecipes[type][0]) }
-        />
-      </label>
     </div>
   );
 }

@@ -1,0 +1,12 @@
+.container {
+  display: inline-block;
+  position: relative;
+}
+
+.container h1 {
+  color: white;
+  font-size: 40px;
+  position: absolute;
+  right: 20px;
+  top: 145px;
+}

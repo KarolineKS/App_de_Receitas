@@ -46,8 +46,9 @@ export default function Recipes({ recipes, arrayKey, imgKey,
 
   return (
     <div>
-      <div>
+      <div className={ style.container__btn }>
         <button
+          className={ style.btn__filter }
           type="button"
           onClick={ fetchAll }
           data-testid="All-category-filter"
@@ -57,6 +58,7 @@ export default function Recipes({ recipes, arrayKey, imgKey,
         {categories[arrayKey]?.length > 0
         && categories[arrayKey]?.map((e, i) => (
           <button
+            className={ style.btn__filter }
             key={ `${e.strCategory}-${i}` }
             type="button"
             data-testid={ `${e.strCategory}-category-filter` }
