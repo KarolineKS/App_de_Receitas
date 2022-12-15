@@ -8,7 +8,7 @@ import { saveOnStorage, getFromLocal } from '../services/storage';
 import whiteHeart from '../images/whiteHeartIcon.svg';
 import blackHeart from '../images/blackHeartIcon.svg';
 import RecipesContext from '../context/RecipesContext';
-import style from './styles/RecipesDetails.module.css';
+import style from './styles/RecipesInProgress.module.css';
 import shareIcon from '../images/shareIcon.svg';
 
 function RecipeInProgress({ history }) {
@@ -120,44 +120,48 @@ function RecipeInProgress({ history }) {
           key={ recipe.idMeal || recipe.idDrink }
         >
           <div>
-
-            <h1 data-testid="recipe-title">
-              {recipe.strMeal || recipe.strDrink}
-            </h1>
-            <label
-              className={ style.label_coracao }
-              htmlFor="favorite-btn"
-            >
-              <img
-                className={ style.coracao }
-                src={ favChecked ? blackHeart : whiteHeart }
-                alt="heart"
-                data-testid="favorite-btn"
-              />
-              <input
-                type="checkbox"
-                id="favorite-btn"
-                className="favorite-btn"
-                checked={ favChecked }
-                onChange={ () => saveFavorites(detailsRecipes[type][0]) }
-              />
-              <button
-                className={ style.share }
-                data-testid="share-btn"
-                type="button"
-                style={ { marginLeft: '200px' } }
-                onClick={ () => {
-                  copy(`http://localhost:3000/${type}/${id}`);
-                  setShowCopy(true);
-                } }
+            <div className={ style.container_title }>
+              <h1 data-testid="recipe-title">
+                {recipe.strMeal || recipe.strDrink}
+              </h1>
+              <label
+                className={ style.label_coracao }
+                htmlFor="favorite-btn"
               >
-                <img src={ shareIcon } alt="share icon" />
-              </button>
-              { showCopy && <p>Link copied!</p>}
+                <img
+                  className={ style.coracao }
+                  src={ favChecked ? blackHeart : whiteHeart }
+                  alt="heart"
+                  data-testid="favorite-btn"
+                />
+                <input
+                  className={ style.input__coracao }
+                  type="checkbox"
+                  id="favorite-btn"
+                  checked={ favChecked }
+                  onChange={ () => saveFavorites(detailsRecipes[type][0]) }
+                />
+                <button
+                  className={ style.share }
+                  data-testid="share-btn"
+                  type="button"
+                  style={ { marginLeft: '200px' } }
+                  onClick={ () => {
+                    copy(`http://localhost:3000/${type}/${id}`);
+                    setShowCopy(true);
+                  } }
+                >
+                  <img
+                    src={ shareIcon }
+                    alt="share icon"
+                  />
+                </button>
+                { showCopy && <p>Link copied!</p>}
 
-            </label>
-
+              </label>
+            </div>
             <img
+              className={ style.img_recipe }
               src={ recipe.strMealThumb || recipe.strDrinkThumb }
               alt=""
               data-testid="recipe-photo"
@@ -203,7 +207,14 @@ function RecipeInProgress({ history }) {
               ))
             }
           </ol>
-          <p data-testid="instructions">{recipe.strInstructions}</p>
+          <h3>Instructions</h3>
+          <p
+            className={ style.instruction }
+            data-testid="instructions"
+          >
+            {recipe.strInstructions}
+
+          </p>
           {type === 'meals' && (
             <iframe
               data-testid="video"
@@ -214,7 +225,15 @@ function RecipeInProgress({ history }) {
             />
           )}
           {type === 'drinks' && (
-            <p data-testid="recipe-category">{recipe.strAlcoholic}</p>
+            <div>
+              <p
+                className={ style.alcool }
+                data-testid="recipe-category"
+              >
+                {recipe.strAlcoholic}
+
+              </p>
+            </div>
           )}
           <button
             className={ style.start_recipes }
