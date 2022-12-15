@@ -22,6 +22,7 @@
   border-radius: 10px;
   border-style: none;
   margin-left: 5px;
+  padding: 5px 10px;
 }
 
 .header .logo_icon {
@@ -29,12 +30,7 @@
   border-radius: 10px;
   margin-right: 25px;
   padding: 5px;
-  width: 45px;
-}
-
-.header .icon {
-  border: none;
-  padding: 2px;
+  width: 50px;
 }
 
 .header .logo {

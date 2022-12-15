@@ -1,10 +1,15 @@
 import { Link } from 'react-router-dom';
 import drinkIcon from '../images/drinkIcon.svg';
 import mealIcon from '../images/mealIcon.svg';
+import style from '../pages/styles/Footer.module.css';
 
 function Footer() {
   return (
-    <div data-testid="footer" style={ { position: 'fixed', bottom: '0' } }>
+    <div
+      className={ style.footer }
+      data-testid="footer"
+      style={ { position: 'fixed', bottom: '0' } }
+    >
       <Link to="/drinks">
         <button
           type="button"
