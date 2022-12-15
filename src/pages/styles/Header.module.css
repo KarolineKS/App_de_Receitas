@@ -16,7 +16,7 @@
   width: 100%;
 }
 
-.header button {
+.header .btn {
   background-color: #fcc436;
   border: none;
   border-radius: 10px;

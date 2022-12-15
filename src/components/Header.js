@@ -36,6 +36,7 @@ export default function Header(props) {
         </div>
         <div>
           <button // sempre presente
+            className={ style.btn }
             data-testid="profile-top-btn"
             type="button"
             src={ profileIcon }
@@ -47,6 +48,7 @@ export default function Header(props) {
           { !searchBtn ? ''
             : (
               <button // presente somente em algumas páginas
+                className={ style.btn }
                 data-testid="search-top-btn"
                 type="button"
                 src={ searchIcon }

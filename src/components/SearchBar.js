@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import RecipesContext from '../context/RecipesContext';
+import style from '../pages/styles/SearchBar.module.css';
 
 export default function SearchBar({ url, history, type, setFunc }) {
   const { radioSearch, setRadioSearch } = useContext(RecipesContext);
@@ -36,50 +37,54 @@ export default function SearchBar({ url, history, type, setFunc }) {
     setSearch(value);
   };
   return (
-    <div>
+    <div className={ style.search__bar }>
       <input
+        className={ style.input__search }
         data-testid="search-input"
         type="text"
         value={ search }
         onChange={ handleChange }
       />
-      <label htmlFor="ingredient-search-radio">
-        Ingredient
-        <input
-          type="radio"
-          name="search-radio"
-          id="ingredient-search-radio"
-          data-testid="ingredient-search-radio"
-          value="i"
-          checked={ radioSearch === 'i' }
-          onChange={ () => setRadioSearch('i') }
-        />
-      </label>
-      <label htmlFor="name-search-radio">
-        Name
-        <input
-          type="radio"
-          name="search-radio"
-          id="name-search-radio"
-          data-testid="name-search-radio"
-          value="s"
-          checked={ radioSearch === 's' }
-          onChange={ () => setRadioSearch('s') }
-        />
-      </label>
-      <label htmlFor="first-letter-search-radio">
-        First letter
-        <input
-          type="radio"
-          name="search-radio"
-          id="first-letter-search-radio"
-          data-testid="first-letter-search-radio"
-          value="f"
-          checked={ radioSearch === 'f' }
-          onChange={ () => setRadioSearch('f') }
-        />
-      </label>
+      <div className={ style.input__radio }>
+        <label htmlFor="ingredient-search-radio">
+          <input
+            type="radio"
+            name="search-radio"
+            id="ingredient-search-radio"
+            data-testid="ingredient-search-radio"
+            value="i"
+            checked={ radioSearch === 'i' }
+            onChange={ () => setRadioSearch('i') }
+          />
+          Ingredient
+        </label>
+        <label htmlFor="name-search-radio">
+          <input
+            type="radio"
+            name="search-radio"
+            id="name-search-radio"
+            data-testid="name-search-radio"
+            value="s"
+            checked={ radioSearch === 's' }
+            onChange={ () => setRadioSearch('s') }
+          />
+          Name
+        </label>
+        <label htmlFor="first-letter-search-radio">
+          <input
+            type="radio"
+            name="search-radio"
+            id="first-letter-search-radio"
+            data-testid="first-letter-search-radio"
+            value="f"
+            checked={ radioSearch === 'f' }
+            onChange={ () => setRadioSearch('f') }
+          />
+          First letter
+        </label>
+      </div>
       <button
+        className={ style.btn_search }
         type="button"
         data-testid="exec-search-btn"
         onClick={ handleButton }
