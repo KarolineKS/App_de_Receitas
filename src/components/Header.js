@@ -8,6 +8,9 @@ import style from '../pages/styles/Header.module.css';
 import logoIcon from '../images/ícone Recipes app.png';
 import iconePrato from '../images/icone-prato.png';
 import iconeBebida from '../images/icone-bebida.png';
+import iconeCheck from '../images/icone-check.png';
+import iconeCoracao from '../images/Icone-coracao.png';
+import iconeProfile from '../images/Perfil.png';
 
 export default function Header(props) {
   const history = useHistory();
@@ -57,8 +60,35 @@ export default function Header(props) {
       <div className={ style.title_page }>
 
         { pageTitle === 'Drinks'
-          ? (<img className={ style.drinks } src={ iconeBebida } alt="icone de prato" />)
-          : (<img className={ style.meals } src={ iconePrato } alt="icone de bebida" />)}
+        && (<img
+          className={ style.drinks }
+          src={ iconeBebida }
+          alt="icone de bebida"
+        />) }
+
+        {pageTitle === 'Meals'
+        && (<img className={ style.meals } src={ iconePrato } alt="icone de prato" />)}
+
+        {pageTitle === 'Done Recipes'
+        && (<img
+          className={ style.check }
+          src={ iconeCheck }
+          alt="icone de check"
+        />)}
+
+        {pageTitle === 'Favorite Recipes'
+        && (<img
+          className={ style.check }
+          src={ iconeCoracao }
+          alt="icone de coração"
+        />)}
+
+        {pageTitle === 'Profile'
+        && (<img
+          className={ style.check }
+          src={ iconeProfile }
+          alt="icone de perfil"
+        />)}
 
         <h1 data-testid="page-title">{pageTitle}</h1>
         {

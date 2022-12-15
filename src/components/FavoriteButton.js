@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import iconeCoracao from '../images/Icone-coracao.png';
 
 function FavoriteButton({ history }) {
   const handleClick = () => {
@@ -7,13 +8,19 @@ function FavoriteButton({ history }) {
   };
 
   return (
-    <button
-      data-testid="profile-favorite-btn"
-      onClick={ handleClick }
-      type="button"
-    >
-      Favorite Recipes
-    </button>
+    <div>
+      <img
+        src={ iconeCoracao }
+        alt="icone de coração"
+      />
+      <button
+        data-testid="profile-favorite-btn"
+        onClick={ handleClick }
+        type="button"
+      >
+        Favorite Recipes
+      </button>
+    </div>
   );
 }
 

@@ -75,11 +75,19 @@
 .header .title_page .drinks {
   margin-bottom: 10px;
   margin-top: 10px;
-  width: 40px;
+  width: 50px;
 }
 
 .header .title_page .meals {
+  height: 50px;
   margin-bottom: 10px;
   margin-top: 10px;
-  width: 55px;
+  width: 70px;
+}
+
+.header .title_page .check {
+  height: 50px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  width: 50px;
 }
