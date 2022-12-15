@@ -4,10 +4,11 @@ import copy from 'clipboard-copy';
 import { getFromLocal, saveOnStorage } from '../services/storage';
 import RecipesContext from '../context/RecipesContext';
 import Recommendation from '../components/Recommendation';
-import './styles/RecipeDetails.css';
+import style from './styles/RecipesDetails.module.css';
 import whiteHeart from '../images/whiteHeartIcon.svg';
 import blackHeart from '../images/blackHeartIcon.svg';
 import DetailsContext from '../context/DetailsContext';
+import shareIcon from '../images/shareIcon.svg';
 
 function RecipeDetails({ match, history, location }) {
   const { recipes, drinks, favChecked,
@@ -102,21 +103,36 @@ function RecipeDetails({ match, history, location }) {
       </button> */}
       {
         detailsRecipes[type]?.map((recipe) => (
-          <div key={ recipe.idMeal || recipe.idDrink }>
+          <div
+            className={ style.container }
+            key={ recipe.idMeal || recipe.idDrink }
+          >
             { showCopy && <p>Link copied!</p>}
 
             <div>
-              <h1 data-testid="recipe-title">
-                {recipe.strMeal || recipe.strDrink}
-              </h1>
-              <label htmlFor="favorite-btn">
-                <img
-                  src={ favChecked ? blackHeart : whiteHeart }
-                  alt="heart"
-                  className="heart-icon"
-                  data-testid="favorite-btn"
-                />
+              <div className={ style.container_title }>
+                <h1 data-testid="recipe-title">
+                  {recipe.strMeal || recipe.strDrink}
+                </h1>
+                <label
+                  className={ style.label_coracao }
+                  htmlFor="favorite-btn"
+                >
+                  <img
+                    className={ style.coracao }
+                    src={ favChecked ? blackHeart : whiteHeart }
+                    alt="heart"
+                    data-testid="favorite-btn"
+                  />
+                  <input
+                    type="checkbox"
+                    id="favorite-btn"
+                    checked={ favChecked }
+                    onChange={ () => saveFavorites(detailsRecipes[type][0]) }
+                  />
+                </label>
                 <button
+                  className={ style.share }
                   data-testid="share-btn"
                   type="button"
                   style={ { marginLeft: '200px' } }
@@ -125,27 +141,24 @@ function RecipeDetails({ match, history, location }) {
                     setShowCopy(true);
                   } }
                 >
-                  Share
+                  <img src={ shareIcon } alt="share icon" />
                 </button>
-                <input
-                  type="checkbox"
-                  id="favorite-btn"
-                  className="favorite-btn"
-                  checked={ favChecked }
-                  onChange={ () => saveFavorites(detailsRecipes[type][0]) }
-                />
-              </label>
+              </div>
               <img
+                className={ style.img_recipe }
                 src={ recipe.strMealThumb || recipe.strDrinkThumb }
                 alt="recipe"
-                style={ { maxWidth: '90%' } }
                 data-testid="recipe-photo"
               />
+              <p
+                className={ style.category }
+                data-testid="recipe-category"
+              >
+                {recipe.strCategory}
+              </p>
             </div>
-            <p data-testid="recipe-category">
-              {recipe.strCategory}
-            </p>
             <div>
+              <h3>Ingredients</h3>
               <ul>
                 {
                   ingredientes.map((ing, index) => (
@@ -160,18 +173,25 @@ function RecipeDetails({ match, history, location }) {
                 }
               </ul>
             </div>
-            <p data-testid="instructions">
+            <h3>Instructions</h3>
+            <p
+              className={ style.instruction }
+              data-testid="instructions"
+            >
               {recipe.strInstructions}
             </p>
             { type === 'meals' && (
-              <iframe
-                data-testid="video"
-                src={ recipe.strYoutube.replace('watch?v=', 'embed/')
-                  .replace('youtube, youtube-nocookie') }
-                title="video youtube"
-                allowFullScreen
-                frameBorder="0"
-              />
+              <div>
+                <h3>Video</h3>
+                <iframe
+                  data-testid="video"
+                  src={ recipe.strYoutube.replace('watch?v=', 'embed/')
+                    .replace('youtube, youtube-nocookie') }
+                  title="video youtube"
+                  allowFullScreen
+                  frameBorder="0"
+                />
+              </div>
             )}
             { type === 'drinks' && (
               <p data-testid="recipe-category">{recipe.strAlcoholic}</p>
@@ -179,12 +199,19 @@ function RecipeDetails({ match, history, location }) {
           </div>
         ))
       }
+      <h3
+        className={ style.recommended }
+      >
+        Recommended
+
+      </h3>
       <Recommendation
         recipes={ type === 'meals' ? drinks : recipes }
         type={ type === 'meals' ? 'drinks' : 'meals' }
       />
       {isDone || (
         <button
+          className={ style.start_recipes }
           data-testid="start-recipe-btn"
           type="button"
           style={ { position: 'fixed', bottom: '0' } }
